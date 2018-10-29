@@ -31,6 +31,7 @@ public class ActivateComparator implements Comparator<Object> {
 
     @Override
     public int compare(Object o1, Object o2) {
+        //基本排序
         if (o1 == null && o2 == null) {
             return 0;
         }
@@ -45,6 +46,7 @@ public class ActivateComparator implements Comparator<Object> {
         }
         Activate a1 = o1.getClass().getAnnotation(Activate.class);
         Activate a2 = o2.getClass().getAnnotation(Activate.class);
+        //使用Activate注解的 `after` 和 `before` 属性，排序
         if ((a1.before().length > 0 || a1.after().length > 0
                 || a2.before().length > 0 || a2.after().length > 0)
                 && o1.getClass().getInterfaces().length > 0
@@ -77,6 +79,7 @@ public class ActivateComparator implements Comparator<Object> {
                 }
             }
         }
+        // 使用Activate注解的 `order` 属性，排序。
         int n1 = a1 == null ? 0 : a1.order();
         int n2 = a2 == null ? 0 : a2.order();
         // never return 0 even if n1 equals n2, otherwise, o1 and o2 will override each other in collection like HashSet
