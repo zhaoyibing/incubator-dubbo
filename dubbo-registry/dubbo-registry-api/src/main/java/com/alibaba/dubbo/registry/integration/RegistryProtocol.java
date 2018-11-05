@@ -58,11 +58,14 @@ import static com.alibaba.dubbo.common.Constants.VALIDATION_KEY;
  */
 public class RegistryProtocol implements Protocol {
 
+    // 日志记录
     private final static Logger logger = LoggerFactory.getLogger(RegistryProtocol.class);
+    // 扩展类RegistryProtocol对象
     private static RegistryProtocol INSTANCE;
     private final Map<URL, NotifyListener> overrideListeners = new ConcurrentHashMap<URL, NotifyListener>();
     //To solve the problem of RMI repeated exposure port conflicts, the services that have been exposed are no longer exposed.
     //providerurl <--> exporter
+    // 为了解决RMI重复暴露端口冲突的问题，已经暴露的服务不再暴露。
     private final Map<String, ExporterChangeableWrapper<?>> bounds = new ConcurrentHashMap<String, ExporterChangeableWrapper<?>>();
     private Cluster cluster;
     private Protocol protocol;
