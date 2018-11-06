@@ -251,6 +251,7 @@ public class Constants {
 
     public static final String CONNECT_TIMEOUT_KEY = "connect.timeout";
 
+    // 远程调用服务超时时间，如果客户端服务端都配置了以客户端为准，客户端没配以服务端为准
     public static final String TIMEOUT_KEY = "timeout";
 
     public static final String RETRIES_KEY = "retries";
@@ -425,6 +426,7 @@ public class Constants {
     /**
      * To decide whether to enable sticky strategy for cluster
      */
+    // 决定是否为群集启用粘性策略，让客户端总是连接同一提供者
     public static final String CLUSTER_STICKY_KEY = "sticky";
 
     /**
@@ -437,6 +439,7 @@ public class Constants {
     /**
      * To decide whether to make connection when the client is created
      */
+    // 决定在创建客户端时是否建立连接
     public static final String LAZY_CONNECT_KEY = "lazy";
 
     /**
@@ -480,11 +483,13 @@ public class Constants {
     /**
      * The key name for export URL in register center
      */
+    // 注册中心中暴露URL的密钥名称
     public static final String EXPORT_KEY = "export";
 
     /**
      * The key name for reference URL in register center
      */
+    // 注册中心引用URL的关键名称
     public static final String REFER_KEY = "refer";
 
     /**
@@ -495,6 +500,7 @@ public class Constants {
     /**
      * The limit of callback service instances for one interface on every client
      */
+    // 每个客户端上一个接口的回调服务实例的限制
     public static final String CALLBACK_INSTANCES_LIMIT_KEY = "callbacks";
 
     /**
