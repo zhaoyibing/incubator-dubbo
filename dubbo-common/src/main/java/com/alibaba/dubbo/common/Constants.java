@@ -57,6 +57,7 @@ public class Constants {
 
     public static final String CACHE_KEY = "cache";
 
+    // 有时候希望人工管理服务提供者的上线和下线，此时需将注册中心标识为非动态管理模式。
     public static final String DYNAMIC_KEY = "dynamic";
 
     public static final String DUBBO_PROPERTIES_KEY = "dubbo.properties.file";
@@ -547,6 +548,7 @@ public class Constants {
 
     public static final String ON_THROW_INSTANCE_KEY = "onthrow.instance";
 
+    // 表示数据采用覆盖方式
     public static final String OVERRIDE_PROTOCOL = "override";
 
     public static final String PRIORITY_KEY = "priority";
