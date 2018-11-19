@@ -319,6 +319,7 @@ public class Constants {
 
     public static final String SUBSCRIBE_KEY = "subscribe";
 
+    // dubbo分组配置，例如因为服务器有限，想在同一个注册中心中，分隔测试和开发环境
     public static final String GROUP_KEY = "group";
 
     public static final String PATH_KEY = "path";

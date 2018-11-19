@@ -75,12 +75,13 @@ public class MulticastRegistry extends FailbackRegistry {
     // 任务调度器
     private final ScheduledExecutorService cleanExecutor = Executors.newScheduledThreadPool(1, new NamedThreadFactory("DubboMulticastRegistryCleanTimer", true));
 
-    // 清理计时器，一定时间清理过期的url
+    // 定时清理执行器，一定时间清理过期的url
     private final ScheduledFuture<?> cleanFuture;
 
     // 清理的间隔时间
     private final int cleanPeriod;
 
+    // 是否通过监控中心
     private volatile boolean admin = false;
 
     public MulticastRegistry(URL url) {

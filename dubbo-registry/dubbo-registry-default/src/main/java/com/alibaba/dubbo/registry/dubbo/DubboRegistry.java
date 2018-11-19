@@ -54,7 +54,7 @@ public class DubboRegistry extends FailbackRegistry {
     private final ScheduledExecutorService reconnectTimer = Executors.newScheduledThreadPool(1, new NamedThreadFactory("DubboRegistryReconnectTimer", true));
 
     // Reconnection timer, regular check connection is available. If unavailable, unlimited reconnection.
-    // 重新连接计时器，定期检查连接可用，如果不可用，则无限制重连
+    // 重新连接执行器，定期检查连接可用，如果不可用，则无限制重连
     private final ScheduledFuture<?> reconnectFuture;
 
     // The lock for client acquisition process, lock the creation process of the client instance to prevent repeated clients
