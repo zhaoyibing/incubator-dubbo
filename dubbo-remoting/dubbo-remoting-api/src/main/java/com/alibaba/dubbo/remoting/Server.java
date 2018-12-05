@@ -35,6 +35,7 @@ public interface Server extends Endpoint, Resetable {
      *
      * @return bound
      */
+    // 判断是否绑定到本地端口，也就是该服务器是否启动成功，能够连接、接收消息，提供服务。
     boolean isBound();
 
     /**
@@ -42,6 +43,7 @@ public interface Server extends Endpoint, Resetable {
      *
      * @return channels
      */
+    // 获得连接该服务器的通道
     Collection<Channel> getChannels();
 
     /**
@@ -50,6 +52,7 @@ public interface Server extends Endpoint, Resetable {
      * @param remoteAddress
      * @return channel
      */
+    // 通过远程地址获得该地址对应的通道
     Channel getChannel(InetSocketAddress remoteAddress);
 
     @Deprecated

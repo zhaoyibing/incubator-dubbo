@@ -41,6 +41,7 @@ public interface Transporter {
      * @throws RemotingException
      * @see com.alibaba.dubbo.remoting.Transporters#bind(URL, ChannelHandler...)
      */
+    // 绑定一个服务器
     @Adaptive({Constants.SERVER_KEY, Constants.TRANSPORTER_KEY})
     Server bind(URL url, ChannelHandler handler) throws RemotingException;
 
@@ -53,6 +54,7 @@ public interface Transporter {
      * @throws RemotingException
      * @see com.alibaba.dubbo.remoting.Transporters#connect(URL, ChannelHandler...)
      */
+    // 连接一个服务器，即创建一个客户端
     @Adaptive({Constants.CLIENT_KEY, Constants.TRANSPORTER_KEY})
     Client connect(URL url, ChannelHandler handler) throws RemotingException;
 

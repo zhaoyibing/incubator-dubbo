@@ -33,6 +33,7 @@ public interface ChannelHandler {
      *
      * @param channel channel.
      */
+    // 连接该通道
     void connected(Channel channel) throws RemotingException;
 
     /**
@@ -40,6 +41,7 @@ public interface ChannelHandler {
      *
      * @param channel channel.
      */
+    // 断开该通道
     void disconnected(Channel channel) throws RemotingException;
 
     /**
@@ -48,6 +50,7 @@ public interface ChannelHandler {
      * @param channel channel.
      * @param message message.
      */
+    // 发送给这个通道消息
     void sent(Channel channel, Object message) throws RemotingException;
 
     /**
@@ -56,6 +59,7 @@ public interface ChannelHandler {
      * @param channel channel.
      * @param message message.
      */
+    // 从这个通道内接收消息
     void received(Channel channel, Object message) throws RemotingException;
 
     /**
@@ -64,6 +68,7 @@ public interface ChannelHandler {
      * @param channel   channel.
      * @param exception exception.
      */
+    // 从这个通道内捕获异常
     void caught(Channel channel, Throwable exception) throws RemotingException;
 
 }

@@ -35,6 +35,7 @@ public interface Endpoint {
      *
      * @return url
      */
+    // 获得该端的url
     URL getUrl();
 
     /**
@@ -42,6 +43,7 @@ public interface Endpoint {
      *
      * @return channel handler
      */
+    // 获得该端的通道处理器
     ChannelHandler getChannelHandler();
 
     /**
@@ -49,6 +51,7 @@ public interface Endpoint {
      *
      * @return local address.
      */
+    // 获得该端的本地地址
     InetSocketAddress getLocalAddress();
 
     /**
@@ -57,6 +60,7 @@ public interface Endpoint {
      * @param message
      * @throws RemotingException
      */
+    // 发送消息
     void send(Object message) throws RemotingException;
 
     /**
@@ -65,18 +69,22 @@ public interface Endpoint {
      * @param message
      * @param sent    already sent to socket?
      */
+    // 发送消息，sent是是否已经发送的标记
     void send(Object message, boolean sent) throws RemotingException;
 
     /**
      * close the channel.
      */
+    // 关闭通道
     void close();
 
     /**
      * Graceful close the channel.
      */
+    // 优雅的关闭，也就是加入了等待时间
     void close(int timeout);
 
+    // 开始关闭
     void startClose();
 
     /**
@@ -84,6 +92,7 @@ public interface Endpoint {
      *
      * @return closed
      */
+    // 通道是否已经关闭
     boolean isClosed();
 
 }

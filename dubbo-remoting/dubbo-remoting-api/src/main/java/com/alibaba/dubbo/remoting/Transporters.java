@@ -29,6 +29,7 @@ public class Transporters {
 
     static {
         // check duplicate jar package
+        // 检查重复的 jar 包
         Version.checkDuplicate(Transporters.class);
         Version.checkDuplicate(RemotingException.class);
     }
@@ -48,11 +49,14 @@ public class Transporters {
             throw new IllegalArgumentException("handlers == null");
         }
         ChannelHandler handler;
+        // 创建handler
         if (handlers.length == 1) {
             handler = handlers[0];
         } else {
             handler = new ChannelHandlerDispatcher(handlers);
         }
+        // 调用Transporter的实现类对象的bind方法。
+        // 例如实现NettyTransporter，则调用NettyTransporter的connect，并且返回相应的server
         return getTransporter().bind(url, handler);
     }
 
@@ -72,9 +76,15 @@ public class Transporters {
         } else {
             handler = new ChannelHandlerDispatcher(handlers);
         }
+        // 调用Transporter的实现类对象的connect方法。
+        // 例如实现NettyTransporter，则调用NettyTransporter的connect，并且返回相应的client
         return getTransporter().connect(url, handler);
     }
 
+    /**
+     * 获得Transporter的实现类对象
+     * @return
+     */
     public static Transporter getTransporter() {
         return ExtensionLoader.getExtensionLoader(Transporter.class).getAdaptiveExtension();
     }
