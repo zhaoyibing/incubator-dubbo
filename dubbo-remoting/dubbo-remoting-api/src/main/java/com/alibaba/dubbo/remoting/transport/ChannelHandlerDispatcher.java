@@ -32,6 +32,9 @@ public class ChannelHandlerDispatcher implements ChannelHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ChannelHandlerDispatcher.class);
 
+    /**
+     * 通道集合
+     */
     private final Collection<ChannelHandler> channelHandlers = new CopyOnWriteArraySet<ChannelHandler>();
 
     public ChannelHandlerDispatcher() {
@@ -52,19 +55,23 @@ public class ChannelHandlerDispatcher implements ChannelHandler {
     }
 
     public ChannelHandlerDispatcher addChannelHandler(ChannelHandler handler) {
+        // 增加通道
         this.channelHandlers.add(handler);
         return this;
     }
 
     public ChannelHandlerDispatcher removeChannelHandler(ChannelHandler handler) {
+        // 移除通道
         this.channelHandlers.remove(handler);
         return this;
     }
 
     @Override
     public void connected(Channel channel) {
+        // 遍历通道处理器集合
         for (ChannelHandler listener : channelHandlers) {
             try {
+                // 连接
                 listener.connected(channel);
             } catch (Throwable t) {
                 logger.error(t.getMessage(), t);

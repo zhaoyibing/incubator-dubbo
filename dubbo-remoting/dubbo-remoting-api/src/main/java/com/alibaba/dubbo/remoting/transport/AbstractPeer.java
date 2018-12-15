@@ -31,10 +31,14 @@ public abstract class AbstractPeer implements Endpoint, ChannelHandler {
     private final ChannelHandler handler;
 
     private volatile URL url;
-
+    /**
+     * 是否正在关闭
+     */
     // closing closed means the process is being closed and close is finished
     private volatile boolean closing;
-
+    /**
+     * 是否关闭完成
+     */
     private volatile boolean closed;
 
     public AbstractPeer(URL url, ChannelHandler handler) {
@@ -50,6 +54,7 @@ public abstract class AbstractPeer implements Endpoint, ChannelHandler {
 
     @Override
     public void send(Object message) throws RemotingException {
+        // url中sent的配置项
         send(message, url.getParameter(Constants.SENT_KEY, false));
     }
 
@@ -65,9 +70,11 @@ public abstract class AbstractPeer implements Endpoint, ChannelHandler {
 
     @Override
     public void startClose() {
+        //判断是否关闭完成
         if (isClosed()) {
             return;
         }
+        // 设置正在关闭
         closing = true;
     }
 

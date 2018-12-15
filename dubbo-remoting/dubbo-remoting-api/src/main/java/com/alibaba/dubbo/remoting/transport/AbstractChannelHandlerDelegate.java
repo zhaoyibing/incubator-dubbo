@@ -23,6 +23,9 @@ import com.alibaba.dubbo.remoting.RemotingException;
 
 public abstract class AbstractChannelHandlerDelegate implements ChannelHandlerDelegate {
 
+    /**
+     * 被装饰的属性
+     */
     protected ChannelHandler handler;
 
     protected AbstractChannelHandlerDelegate(ChannelHandler handler) {

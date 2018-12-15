@@ -26,6 +26,9 @@ import com.alibaba.dubbo.remoting.transport.MultiMessageHandler;
 
 public class ChannelHandlers {
 
+    /**
+     * 单例
+     */
     private static ChannelHandlers INSTANCE = new ChannelHandlers();
 
     protected ChannelHandlers() {
@@ -44,6 +47,7 @@ public class ChannelHandlers {
     }
 
     protected ChannelHandler wrapInternal(ChannelHandler handler, URL url) {
+        // 调用了多消息处理器，对心跳消息进行了功能加强
         return new MultiMessageHandler(new HeartbeatHandler(ExtensionLoader.getExtensionLoader(Dispatcher.class)
                 .getAdaptiveExtension().dispatch(handler, url)));
     }

@@ -64,6 +64,10 @@ public class Constants {
 
     public static final String DEFAULT_DUBBO_PROPERTIES = "dubbo.properties";
 
+    /**
+     * true 等待消息发出，消息发送失败将抛出异常。
+     * false 不等待消息发出，将消息放入 IO 队列，即刻返回。
+     */
     public static final String SENT_KEY = "sent";
 
     public static final boolean DEFAULT_SENT = false;
