@@ -117,8 +117,11 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
 
     @Override
     public void disconnected(Channel channel) throws RemotingException {
+        // 设置最后一次接收消息的时间
         channel.setAttribute(KEY_READ_TIMESTAMP, System.currentTimeMillis());
+        // 设置最后一次发送消息的时间
         channel.setAttribute(KEY_WRITE_TIMESTAMP, System.currentTimeMillis());
+        // 获得信息交换通道实例
         ExchangeChannel exchangeChannel = HeaderExchangeChannel.getOrAddChannel(channel);
         try {
             handler.disconnected(exchangeChannel);

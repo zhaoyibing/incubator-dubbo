@@ -28,6 +28,7 @@ public abstract class ExchangeHandlerAdapter extends TelnetHandlerAdapter implem
 
     @Override
     public Object reply(ExchangeChannel channel, Object msg) throws RemotingException {
+        // 直接返回null
         return null;
     }
 

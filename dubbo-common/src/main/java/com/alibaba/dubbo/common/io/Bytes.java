@@ -91,6 +91,7 @@ public class Bytes {
      */
     public static void short2bytes(short v, byte[] b, int off) {
         b[off + 1] = (byte) v;
+        // 无符号右移，忽略符号位，空位都以0补齐，例如1010101010101010，就b[0]=0000000010101010
         b[off + 0] = (byte) (v >>> 8);
     }
 

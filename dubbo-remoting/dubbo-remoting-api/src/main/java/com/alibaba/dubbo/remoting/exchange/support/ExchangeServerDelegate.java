@@ -31,6 +31,9 @@ import java.util.Collection;
  */
 public class ExchangeServerDelegate implements ExchangeServer {
 
+    /**
+     * 被装饰的服务器属性
+     */
     private transient ExchangeServer server;
 
     public ExchangeServerDelegate() {

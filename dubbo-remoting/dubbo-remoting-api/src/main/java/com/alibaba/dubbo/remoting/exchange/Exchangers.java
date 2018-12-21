@@ -33,6 +33,7 @@ public class Exchangers {
 
     static {
         // check duplicate jar package
+        // 检查重复的 jar 包
         Version.checkDuplicate(Exchangers.class);
     }
 

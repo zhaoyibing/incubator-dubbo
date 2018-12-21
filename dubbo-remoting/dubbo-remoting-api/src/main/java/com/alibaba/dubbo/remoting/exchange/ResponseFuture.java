@@ -28,14 +28,14 @@ public interface ResponseFuture {
 
     /**
      * get result.
-     *
+     * 获得结果
      * @return result.
      */
     Object get() throws RemotingException;
 
     /**
      * get result with the specified timeout.
-     *
+     *  获得具有指定超时的结果
      * @param timeoutInMillis timeout.
      * @return result.
      */
@@ -43,14 +43,14 @@ public interface ResponseFuture {
 
     /**
      * set callback.
-     *
+     * 设置回调
      * @param callback
      */
     void setCallback(ResponseCallback callback);
 
     /**
      * check is done.
-     *
+     * 检测是否完成
      * @return done or not.
      */
     boolean isDone();

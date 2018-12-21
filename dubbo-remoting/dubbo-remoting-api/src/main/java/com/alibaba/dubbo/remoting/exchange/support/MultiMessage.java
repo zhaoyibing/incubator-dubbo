@@ -29,6 +29,9 @@ import java.util.List;
  */
 public final class MultiMessage implements Iterable {
 
+    /**
+     * 消息集合
+     */
     private final List messages = new ArrayList();
 
     private MultiMessage() {
