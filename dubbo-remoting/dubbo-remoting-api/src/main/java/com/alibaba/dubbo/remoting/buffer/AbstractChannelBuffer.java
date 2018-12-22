@@ -24,12 +24,24 @@ import java.nio.ByteBuffer;
 
 public abstract class AbstractChannelBuffer implements ChannelBuffer {
 
+    /**
+     * 读索引
+     */
     private int readerIndex;
 
+    /**
+     * 写索引
+     */
     private int writerIndex;
 
+    /**
+     * 标记读索引
+     */
     private int markedReaderIndex;
 
+    /**
+     * 标记写索引
+     */
     private int markedWriterIndex;
 
     @Override
@@ -50,6 +62,10 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
         return writerIndex;
     }
 
+    /**
+     * 设置写索引
+     * @param writerIndex
+     */
     @Override
     public void writerIndex(int writerIndex) {
         if (writerIndex < readerIndex || writerIndex > capacity()) {
@@ -58,6 +74,11 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
         this.writerIndex = writerIndex;
     }
 
+    /**
+     * 设置索引
+     * @param readerIndex
+     * @param writerIndex
+     */
     @Override
     public void setIndex(int readerIndex, int writerIndex) {
         if (readerIndex < 0 || readerIndex > writerIndex || writerIndex > capacity()) {
@@ -69,6 +90,7 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
 
     @Override
     public void clear() {
+        // 把索引清零
         readerIndex = writerIndex = 0;
     }
 
@@ -82,48 +104,77 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
         return writableBytes() > 0;
     }
 
+    /**
+     * 返回可读字节数
+     * @return
+     */
     @Override
     public int readableBytes() {
         return writerIndex - readerIndex;
     }
 
+    /**
+     * 返回可写字节数
+     * @return
+     */
     @Override
     public int writableBytes() {
         return capacity() - writerIndex;
     }
 
+    /**
+     * 标记读索引
+     */
     @Override
     public void markReaderIndex() {
         markedReaderIndex = readerIndex;
     }
 
+    /**
+     * 回滚读索引
+     */
     @Override
     public void resetReaderIndex() {
         readerIndex(markedReaderIndex);
     }
 
+    /**
+     * 标记写索引
+     */
     @Override
     public void markWriterIndex() {
         markedWriterIndex = writerIndex;
     }
 
+    /**
+     * 回滚写索引
+     */
     @Override
     public void resetWriterIndex() {
         writerIndex = markedWriterIndex;
     }
 
+    /**
+     * 丢弃读的数据
+     */
     @Override
     public void discardReadBytes() {
         if (readerIndex == 0) {
             return;
         }
+        // 读缓冲区数据
         setBytes(0, this, readerIndex, writerIndex - readerIndex);
+        // 获得读的所有数据索引
         writerIndex -= readerIndex;
         markedReaderIndex = Math.max(markedReaderIndex - readerIndex, 0);
         markedWriterIndex = Math.max(markedWriterIndex - readerIndex, 0);
         readerIndex = 0;
     }
 
+    /**
+     * 确保数组有可写的容量
+     * @param writableBytes the expected minimum number of writable bytes
+     */
     @Override
     public void ensureWritableBytes(int writableBytes) {
         if (writableBytes > writableBytes()) {
@@ -179,6 +230,7 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
 
     @Override
     public ChannelBuffer readBytes(int length) {
+        // 核对可读字节数
         checkReadableBytes(length);
         if (length == 0) {
             return ChannelBuffers.EMPTY_BUFFER;
@@ -328,6 +380,10 @@ public abstract class AbstractChannelBuffer implements ChannelBuffer {
                 ')';
     }
 
+    /**
+     * 核对可读字节数
+     * @param minimumReadableBytes
+     */
     protected void checkReadableBytes(int minimumReadableBytes) {
         if (readableBytes() < minimumReadableBytes) {
             throw new IndexOutOfBoundsException();

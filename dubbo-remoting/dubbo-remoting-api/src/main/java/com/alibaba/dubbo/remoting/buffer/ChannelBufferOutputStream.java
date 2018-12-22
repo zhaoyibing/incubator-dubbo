@@ -22,7 +22,13 @@ import java.io.OutputStream;
 
 public class ChannelBufferOutputStream extends OutputStream {
 
+    /**
+     * 缓冲区
+     */
     private final ChannelBuffer buffer;
+    /**
+     * 记录开始写入的索引
+     */
     private final int startIndex;
 
     public ChannelBufferOutputStream(ChannelBuffer buffer) {
@@ -30,9 +36,14 @@ public class ChannelBufferOutputStream extends OutputStream {
             throw new NullPointerException("buffer");
         }
         this.buffer = buffer;
+        // 把开始写入数据的索引记录下来
         startIndex = buffer.writerIndex();
     }
 
+    /**
+     * 返回写入了多少数据
+     * @return
+     */
     public int writtenBytes() {
         return buffer.writerIndex() - startIndex;
     }

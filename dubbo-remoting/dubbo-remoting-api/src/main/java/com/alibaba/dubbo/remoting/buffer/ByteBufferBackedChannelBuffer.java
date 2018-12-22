@@ -24,8 +24,14 @@ import java.nio.ByteBuffer;
 
 public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
 
+    /**
+     * ByteBuffer实例
+     */
     private final ByteBuffer buffer;
 
+    /**
+     * 容量
+     */
     private final int capacity;
 
     public ByteBufferBackedChannelBuffer(ByteBuffer buffer) {
@@ -33,8 +39,11 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
             throw new NullPointerException("buffer");
         }
 
+        // 创建一个新的字节缓冲区，新缓冲区的大小将是此缓冲区的剩余容量
         this.buffer = buffer.slice();
+        // 返回buffer的剩余容量
         capacity = buffer.remaining();
+        // 设置写索引
         writerIndex(capacity);
     }
 
@@ -44,8 +53,13 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
         setIndex(buffer.readerIndex(), buffer.writerIndex());
     }
 
+    /**
+     * 返回工厂实例
+     * @return
+     */
     @Override
     public ChannelBufferFactory factory() {
+        // 判断缓冲区是否是直接缓冲区
         if (buffer.isDirect()) {
             return DirectChannelBufferFactory.getInstance();
         } else {
@@ -60,51 +74,79 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
     }
 
 
+    /**
+     * 复制数据
+     * @param index
+     * @param length
+     * @return
+     */
     @Override
     public ChannelBuffer copy(int index, int length) {
         ByteBuffer src;
         try {
+            // 创建一个缓存区，和buffer共享数据
             src = (ByteBuffer) buffer.duplicate().position(index).limit(index + length);
         } catch (IllegalArgumentException e) {
             throw new IndexOutOfBoundsException();
         }
 
+        // 如果buffer是直接缓冲区，则分配一个直接缓冲区
         ByteBuffer dst = buffer.isDirect()
                 ? ByteBuffer.allocateDirect(length)
                 : ByteBuffer.allocate(length);
         dst.put(src);
         dst.clear();
+        // 新建一个ByteBufferBackedChannelBuffer
         return new ByteBufferBackedChannelBuffer(dst);
     }
 
 
+    /**
+     * 获得某个位置的字节数据
+     * @param index
+     * @return
+     */
     @Override
     public byte getByte(int index) {
         return buffer.get(index);
     }
 
 
+    /**
+     * 获得固定位置、固定长度的数据
+     * @param index
+     * @param dst
+     * @param dstIndex the first index of the destination
+     * @param length   the number of bytes to transfer
+     */
     @Override
     public void getBytes(int index, byte[] dst, int dstIndex, int length) {
+        // 创建一个共享数据的新缓冲区
         ByteBuffer data = buffer.duplicate();
         try {
+            // 限制缓冲区大小为index + length，重置缓冲区位置为index
             data.limit(index + length).position(index);
         } catch (IllegalArgumentException e) {
             throw new IndexOutOfBoundsException();
         }
+        // 将从dstIndex开始 length长度的字节数据写入到dst中
         data.get(dst, dstIndex, length);
     }
 
 
     @Override
     public void getBytes(int index, ByteBuffer dst) {
+        // 创建一个共享数据的新缓冲区
         ByteBuffer data = buffer.duplicate();
+        // 取buffer的剩余容量-index 和 dst剩余容量的最小值
         int bytesToCopy = Math.min(capacity() - index, dst.remaining());
         try {
+            // 限制data 的大小和重置位置到index
             data.limit(index + bytesToCopy).position(index);
         } catch (IllegalArgumentException e) {
             throw new IndexOutOfBoundsException();
         }
+        // 传输剩余字节数
         dst.put(data);
     }
 
@@ -115,7 +157,9 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
             ByteBufferBackedChannelBuffer bbdst = (ByteBufferBackedChannelBuffer) dst;
             ByteBuffer data = bbdst.buffer.duplicate();
 
+            // 限制data长度
             data.limit(dstIndex + length).position(dstIndex);
+            // 获取数据
             getBytes(index, data);
         } else if (buffer.hasArray()) {
             dst.setBytes(dstIndex, buffer.array(), index + buffer.arrayOffset(), length);
@@ -150,12 +194,25 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
     }
 
 
+    /**
+     * 往固定位置写入字节数据
+     * @param index
+     * @param value
+     */
     @Override
     public void setByte(int index, int value) {
+        // 往buffer写数据
         buffer.put(index, (byte) value);
     }
 
 
+    /**
+     * 从buffer的index开始，把src中从srcIndex位置开始的length长度数据写入到buffer
+     * @param index
+     * @param src
+     * @param srcIndex
+     * @param length
+     */
     @Override
     public void setBytes(int index, byte[] src, int srcIndex, int length) {
         ByteBuffer data = buffer.duplicate();
@@ -164,6 +221,11 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
     }
 
 
+    /**
+     * 从buffer的index开始，把src的数据都写入buffer
+     * @param index
+     * @param src
+     */
     @Override
     public void setBytes(int index, ByteBuffer src) {
         ByteBuffer data = buffer.duplicate();

@@ -21,15 +21,28 @@ import java.nio.ByteBuffer;
 
 public final class ChannelBuffers {
 
+    /**
+     * 空缓冲区
+     */
     public static final ChannelBuffer EMPTY_BUFFER = new HeapChannelBuffer(0);
 
     private ChannelBuffers() {
     }
 
+    /**
+     * 动态创建一个缓冲区
+     * @return
+     */
     public static ChannelBuffer dynamicBuffer() {
+        // 动态创建一个256大小容量缓冲区
         return dynamicBuffer(256);
     }
 
+    /**
+     * 动态创建一个指定大小的缓冲区
+     * @param capacity
+     * @return
+     */
     public static ChannelBuffer dynamicBuffer(int capacity) {
         return new DynamicChannelBuffer(capacity);
     }
@@ -39,6 +52,11 @@ public final class ChannelBuffers {
         return new DynamicChannelBuffer(capacity, factory);
     }
 
+    /**
+     * 创建一个指定大小的堆缓冲区
+     * @param capacity
+     * @return
+     */
     public static ChannelBuffer buffer(int capacity) {
         if (capacity < 0) {
             throw new IllegalArgumentException("capacity can not be negative");
@@ -53,11 +71,18 @@ public final class ChannelBuffers {
         if (array == null) {
             throw new NullPointerException("array == null");
         }
+        // 新建一个length长度的字节数组
         byte[] dest = new byte[length];
+        // 复制数据
         System.arraycopy(array, offset, dest, 0, length);
         return wrappedBuffer(dest);
     }
 
+    /**
+     * 使用字节数组创建新的堆缓冲区。
+     * @param array
+     * @return
+     */
     public static ChannelBuffer wrappedBuffer(byte[] array) {
         if (array == null) {
             throw new NullPointerException("array == null");
@@ -65,25 +90,41 @@ public final class ChannelBuffers {
         if (array.length == 0) {
             return EMPTY_BUFFER;
         }
+        // 使用现有字节数组创建新的堆缓冲区。
         return new HeapChannelBuffer(array);
     }
 
+    /**
+     * 通过buffer来创建一个新的缓冲区
+     * @param buffer
+     * @return
+     */
     public static ChannelBuffer wrappedBuffer(ByteBuffer buffer) {
+        // 如果缓冲区没有剩余容量
         if (!buffer.hasRemaining()) {
             return EMPTY_BUFFER;
         }
+        // 如果是字节数组生成的缓冲区
         if (buffer.hasArray()) {
+            // 使用buffer的字节数组生成一个新的缓冲区
             return wrappedBuffer(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.remaining());
         } else {
+            // 基于ByteBuffer创建一个缓冲区（利用buffer的剩余容量创建）
             return new ByteBufferBackedChannelBuffer(buffer);
         }
     }
 
+    /**
+     * 创建一个直接缓冲区
+     * @param capacity
+     * @return
+     */
     public static ChannelBuffer directBuffer(int capacity) {
         if (capacity == 0) {
             return EMPTY_BUFFER;
         }
 
+        // 创建一个容量为capacity的直接缓冲区
         ChannelBuffer buffer = new ByteBufferBackedChannelBuffer(
                 ByteBuffer.allocateDirect(capacity));
         buffer.clear();
@@ -91,17 +132,22 @@ public final class ChannelBuffers {
     }
 
     public static boolean equals(ChannelBuffer bufferA, ChannelBuffer bufferB) {
+        // 获得bufferA的可读数据
         final int aLen = bufferA.readableBytes();
+        // 如果两个缓冲区的可读数据大小不一样，则不是同一个
         if (aLen != bufferB.readableBytes()) {
             return false;
         }
 
         final int byteCount = aLen & 7;
 
+        // 获得两个比较的缓冲区的读索引
         int aIndex = bufferA.readerIndex();
         int bIndex = bufferB.readerIndex();
 
+        // 最多比较缓冲区中的7个数据
         for (int i = byteCount; i > 0; i--) {
+            // 一旦有一个数据不一样，则不是同一个
             if (bufferA.getByte(aIndex) != bufferB.getByte(bIndex)) {
                 return false;
             }
