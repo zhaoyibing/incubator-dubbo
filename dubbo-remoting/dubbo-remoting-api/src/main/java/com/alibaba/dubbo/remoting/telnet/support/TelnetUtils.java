@@ -24,6 +24,11 @@ import java.util.List;
  */
 public class TelnetUtils {
 
+    /**
+     *
+     * @param table
+     * @return
+     */
     public static String toList(List<List<String>> table) {
         int[] widths = new int[table.get(0).size()];
         for (int j = 0; j < widths.length; j++) {

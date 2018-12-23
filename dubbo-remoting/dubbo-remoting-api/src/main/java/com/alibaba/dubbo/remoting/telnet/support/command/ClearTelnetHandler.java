@@ -31,14 +31,17 @@ public class ClearTelnetHandler implements TelnetHandler {
 
     @Override
     public String telnet(Channel channel, String message) {
+        // 清除屏幕上的内容行数
         int lines = 100;
         if (message.length() > 0) {
+            // 如果不是一个数字
             if (!StringUtils.isInteger(message)) {
                 return "Illegal lines " + message + ", must be integer.";
             }
             lines = Integer.parseInt(message);
         }
         StringBuilder buf = new StringBuilder();
+        // 一行一行清除
         for (int i = 0; i < lines; i++) {
             buf.append("\r\n");
         }
