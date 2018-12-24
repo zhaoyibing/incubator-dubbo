@@ -42,10 +42,19 @@ final class GrizzlyChannel extends AbstractChannel {
 
     private static final Logger logger = LoggerFactory.getLogger(GrizzlyChannel.class);
 
+    /**
+     * 通道key
+     */
     private static final String CHANNEL_KEY = GrizzlyChannel.class.getName() + ".CHANNEL";
 
+    /**
+     * 通道
+     */
     private static final Attribute<GrizzlyChannel> ATTRIBUTE = Grizzly.DEFAULT_ATTRIBUTE_BUILDER.createAttribute(CHANNEL_KEY);
 
+    /**
+     * Grizzly的连接实例
+     */
     private final Connection<?> connection;
 
     /**
@@ -58,6 +67,7 @@ final class GrizzlyChannel extends AbstractChannel {
         if (connection == null) {
             throw new IllegalArgumentException("grizzly connection == null");
         }
+        // 设置连接实例
         this.connection = connection;
     }
 
@@ -65,16 +75,22 @@ final class GrizzlyChannel extends AbstractChannel {
         if (connection == null) {
             return null;
         }
+        // 获得通道实例
         GrizzlyChannel ret = ATTRIBUTE.get(connection);
+        // 如果GrizzlyChannel为空，则新建
         if (ret == null) {
             ret = new GrizzlyChannel(connection, url, handler);
+            // 如果通道是打开的
             if (connection.isOpen()) {
                 ATTRIBUTE.set(connection, ret);
             }
         }
         return ret;
     }
-
+    /**
+     * 如果不连接，则移除通道
+     * @param connection
+     */
     static void removeChannelIfDisconnected(Connection<?> connection) {
         if (connection != null && !connection.isOpen()) {
             ATTRIBUTE.remove(connection);
@@ -103,9 +119,12 @@ final class GrizzlyChannel extends AbstractChannel {
 
         int timeout = 0;
         try {
+            // 发送消息，获得GrizzlyFuture实例
             GrizzlyFuture future = connection.write(message);
             if (sent) {
+                // 获得延迟多少时间获得响应
                 timeout = getUrl().getPositiveParameter(Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT);
+                // 获得请求的值
                 future.get(timeout, TimeUnit.MILLISECONDS);
             }
         } catch (TimeoutException e) {
@@ -124,6 +143,7 @@ final class GrizzlyChannel extends AbstractChannel {
             logger.warn(e.getMessage(), e);
         }
         try {
+            // 移除通道当该通道不连接时
             removeChannelIfDisconnected(connection);
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);
