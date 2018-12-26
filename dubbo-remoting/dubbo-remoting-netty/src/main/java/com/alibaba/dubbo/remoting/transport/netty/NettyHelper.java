@@ -25,8 +25,13 @@ import org.jboss.netty.logging.InternalLoggerFactory;
 
 final class NettyHelper {
 
+    /**
+     * 设置日志工厂
+     */
     public static void setNettyLoggerFactory() {
+        // 获得日志工厂
         InternalLoggerFactory factory = InternalLoggerFactory.getDefaultFactory();
+        // 设置DubboLoggerFactory
         if (factory == null || !(factory instanceof DubboLoggerFactory)) {
             InternalLoggerFactory.setDefaultFactory(new DubboLoggerFactory());
         }
