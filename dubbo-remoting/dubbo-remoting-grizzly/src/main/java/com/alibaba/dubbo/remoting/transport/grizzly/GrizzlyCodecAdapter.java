@@ -68,7 +68,7 @@ public class GrizzlyCodecAdapter extends BaseFilter {
         this.url = url;
         this.handler = handler;
         int b = url.getPositiveParameter(Constants.BUFFER_KEY, Constants.DEFAULT_BUFFER_SIZE);
-        // 如果缓存区大小在16字节以内，则设置配置大小，如果不是，则设置8字节的缓冲区大小
+        // 如果缓存区大小在16k以内，则设置配置大小，如果不是，则设置8k的缓冲区大小
         this.bufferSize = b >= Constants.MIN_BUFFER_SIZE && b <= Constants.MAX_BUFFER_SIZE ? b : Constants.DEFAULT_BUFFER_SIZE;
     }
 

@@ -36,8 +36,14 @@ final class MinaChannel extends AbstractChannel {
 
     private static final Logger logger = LoggerFactory.getLogger(MinaChannel.class);
 
+    /**
+     * 通道的key
+     */
     private static final String CHANNEL_KEY = MinaChannel.class.getName() + ".CHANNEL";
 
+    /**
+     * mina中的一个句柄，表示两个端点之间的连接，与传输类型无关
+     */
     private final IoSession session;
 
     private MinaChannel(IoSession session, URL url, ChannelHandler handler) {
@@ -49,14 +55,21 @@ final class MinaChannel extends AbstractChannel {
     }
 
     static MinaChannel getOrAddChannel(IoSession session, URL url, ChannelHandler handler) {
+        // 如果连接session为空，则返回空
         if (session == null) {
             return null;
         }
+        // 获得MinaChannel实例
         MinaChannel ret = (MinaChannel) session.getAttribute(CHANNEL_KEY);
+        // 如果不存在，则创建
         if (ret == null) {
+            // 创建一个MinaChannel实例
             ret = new MinaChannel(session, url, handler);
+            // 如果两个端点连接
             if (session.isConnected()) {
+                // 把新创建的MinaChannel添加到session 中
                 MinaChannel old = (MinaChannel) session.setAttribute(CHANNEL_KEY, ret);
+                // 如果属性的旧值不为空，则重新设置旧值
                 if (old != null) {
                     session.setAttribute(CHANNEL_KEY, old);
                     ret = old;
@@ -66,6 +79,10 @@ final class MinaChannel extends AbstractChannel {
         return ret;
     }
 
+    /**
+     * 当没有连接时移除该通道
+     * @param session
+     */
     static void removeChannelIfDisconnected(IoSession session) {
         if (session != null && !session.isConnected()) {
             session.removeAttribute(CHANNEL_KEY);
@@ -94,9 +111,13 @@ final class MinaChannel extends AbstractChannel {
         boolean success = true;
         int timeout = 0;
         try {
+            // 发送消息，返回future
             WriteFuture future = session.write(message);
+            // 如果已经发送过了
             if (sent) {
+                // 获得延迟时间
                 timeout = getUrl().getPositiveParameter(Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT);
+                // 等待timeout的连接时间后查看是否发送成功
                 success = future.join(timeout);
             }
         } catch (Throwable e) {
@@ -117,6 +138,7 @@ final class MinaChannel extends AbstractChannel {
             logger.warn(e.getMessage(), e);
         }
         try {
+            // 当通道未连接时移除通道
             removeChannelIfDisconnected(session);
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);
@@ -125,6 +147,7 @@ final class MinaChannel extends AbstractChannel {
             if (logger.isInfoEnabled()) {
                 logger.info("CLose mina channel " + session);
             }
+            // 关闭session
             session.close();
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);

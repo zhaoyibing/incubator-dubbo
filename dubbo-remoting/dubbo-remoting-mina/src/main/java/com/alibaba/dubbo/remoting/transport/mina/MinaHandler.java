@@ -27,8 +27,14 @@ import org.apache.mina.common.IoSession;
  */
 public class MinaHandler extends IoHandlerAdapter {
 
+    /**
+     * url对象
+     */
     private final URL url;
 
+    /**
+     * 通道处理器对象
+     */
     private final ChannelHandler handler;
 
     public MinaHandler(URL url, ChannelHandler handler) {
@@ -42,12 +48,20 @@ public class MinaHandler extends IoHandlerAdapter {
         this.handler = handler;
     }
 
+    /**
+     * 连接
+     * @param session
+     * @throws Exception
+     */
     @Override
     public void sessionOpened(IoSession session) throws Exception {
+        // 获得MinaChannel对象
         MinaChannel channel = MinaChannel.getOrAddChannel(session, url, handler);
         try {
+            // 调用接连该通道
             handler.connected(channel);
         } finally {
+            // 如果没有连接则移除通道
             MinaChannel.removeChannelIfDisconnected(session);
         }
     }
