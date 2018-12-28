@@ -39,10 +39,19 @@ final class NettyChannel extends AbstractChannel {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyChannel.class);
 
+    /**
+     * 通道集合
+     */
     private static final ConcurrentMap<Channel, NettyChannel> channelMap = new ConcurrentHashMap<Channel, NettyChannel>();
 
+    /**
+     * 通道
+     */
     private final Channel channel;
 
+    /**
+     * 属性集合
+     */
     private final Map<String, Object> attributes = new ConcurrentHashMap<String, Object>();
 
     private NettyChannel(Channel channel, URL url, ChannelHandler handler) {
@@ -57,10 +66,14 @@ final class NettyChannel extends AbstractChannel {
         if (ch == null) {
             return null;
         }
+        // 首先从集合中取通道
         NettyChannel ret = channelMap.get(ch);
+        // 如果为空，则新建
         if (ret == null) {
             NettyChannel nettyChannel = new NettyChannel(ch, url, handler);
+            // 如果通道还活跃着
             if (ch.isActive()) {
+                // 加入集合
                 ret = channelMap.putIfAbsent(ch, nettyChannel);
             }
             if (ret == null) {
@@ -71,6 +84,7 @@ final class NettyChannel extends AbstractChannel {
     }
 
     static void removeChannelIfDisconnected(Channel ch) {
+        // 如果通道不活跃了
         if (ch != null && !ch.isActive()) {
             channelMap.remove(ch);
         }
@@ -98,12 +112,18 @@ final class NettyChannel extends AbstractChannel {
         boolean success = true;
         int timeout = 0;
         try {
+            // 写入数据，发送消息
             ChannelFuture future = channel.writeAndFlush(message);
+            // 如果已经发送过
             if (sent) {
+                // 获得超时时间
                 timeout = getUrl().getPositiveParameter(Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT);
+                // 等待timeout的连接时间后查看是否发送成功
                 success = future.await(timeout);
             }
+            // 获得异常
             Throwable cause = future.cause();
+            // 如果异常不为空，则抛出异常
             if (cause != null) {
                 throw cause;
             }
@@ -125,11 +145,13 @@ final class NettyChannel extends AbstractChannel {
             logger.warn(e.getMessage(), e);
         }
         try {
+            // 移除通道
             removeChannelIfDisconnected(channel);
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);
         }
         try {
+            // 清理属性集合
             attributes.clear();
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);
@@ -138,6 +160,7 @@ final class NettyChannel extends AbstractChannel {
             if (logger.isInfoEnabled()) {
                 logger.info("Close netty channel " + channel);
             }
+            // 关闭通道
             channel.close();
         } catch (Exception e) {
             logger.warn(e.getMessage(), e);

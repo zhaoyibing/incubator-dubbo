@@ -29,6 +29,9 @@ import java.nio.ByteBuffer;
 
 public class NettyBackedChannelBuffer implements ChannelBuffer {
 
+    /**
+     * 缓冲区
+     */
     private ByteBuf buffer;
 
     public NettyBackedChannelBuffer(ByteBuf buffer) {
