@@ -31,18 +31,33 @@ import java.util.List;
 
 public class ZkclientZookeeperClient extends AbstractZookeeperClient<IZkChildListener> {
 
+    /**
+     * zk客户端包装类
+     */
     private final ZkClientWrapper client;
 
+    /**
+     * 连接状态
+     */
     private volatile KeeperState state = KeeperState.SyncConnected;
 
     public ZkclientZookeeperClient(URL url) {
         super(url);
+        // 新建一个zkclient包装类
         client = new ZkClientWrapper(url.getBackupAddress(), 30000);
+        // 增加状态监听
         client.addListener(new IZkStateListener() {
+            /**
+             * 如果状态改变
+             * @param state
+             * @throws Exception
+             */
             @Override
             public void handleStateChanged(KeeperState state) throws Exception {
                 ZkclientZookeeperClient.this.state = state;
+                // 如果状态变为了断开连接
                 if (state == KeeperState.Disconnected) {
+                    // 则修改状态
                     stateChanged(StateListener.DISCONNECTED);
                 } else if (state == KeeperState.SyncConnected) {
                     stateChanged(StateListener.CONNECTED);
@@ -51,9 +66,11 @@ public class ZkclientZookeeperClient extends AbstractZookeeperClient<IZkChildLis
 
             @Override
             public void handleNewSession() throws Exception {
+                // 状态变为重连
                 stateChanged(StateListener.RECONNECTED);
             }
         });
+        // 启动客户端
         client.start();
     }
 
@@ -61,6 +78,7 @@ public class ZkclientZookeeperClient extends AbstractZookeeperClient<IZkChildLis
     @Override
     public void createPersistent(String path) {
         try {
+            // 递归创建节点
             client.createPersistent(path);
         } catch (ZkNodeExistsException e) {
         }
@@ -69,6 +87,7 @@ public class ZkclientZookeeperClient extends AbstractZookeeperClient<IZkChildLis
     @Override
     public void createEphemeral(String path) {
         try {
+            // 创建临时节点
             client.createEphemeral(path);
         } catch (ZkNodeExistsException e) {
         }
@@ -77,6 +96,7 @@ public class ZkclientZookeeperClient extends AbstractZookeeperClient<IZkChildLis
     @Override
     public void delete(String path) {
         try {
+            // 删除节点
             client.delete(path);
         } catch (ZkNoNodeException e) {
         }
@@ -85,6 +105,7 @@ public class ZkclientZookeeperClient extends AbstractZookeeperClient<IZkChildLis
     @Override
     public List<String> getChildren(String path) {
         try {
+            // 获得子节点
             return client.getChildren(path);
         } catch (ZkNoNodeException e) {
             return null;
@@ -94,6 +115,7 @@ public class ZkclientZookeeperClient extends AbstractZookeeperClient<IZkChildLis
     @Override
     public boolean checkExists(String path) {
         try {
+            // 查看是否存在该节点
             return client.exists(path);
         } catch (Throwable t) {
         }
@@ -121,11 +143,22 @@ public class ZkclientZookeeperClient extends AbstractZookeeperClient<IZkChildLis
         };
     }
 
+    /**
+     * 增加子节点的监听器
+     * @param path
+     * @param listener
+     * @return
+     */
     @Override
     public List<String> addTargetChildListener(String path, final IZkChildListener listener) {
         return client.subscribeChildChanges(path, listener);
     }
 
+    /**
+     * 移除子节点的监听器
+     * @param path
+     * @param listener
+     */
     @Override
     public void removeTargetChildListener(String path, IZkChildListener listener) {
         client.unsubscribeChildChanges(path, listener);
