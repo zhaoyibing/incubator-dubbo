@@ -29,21 +29,21 @@ public interface Result {
 
     /**
      * Get invoke result.
-     *
+     * 获得实体域结果
      * @return result. if no result return null.
      */
     Object getValue();
 
     /**
      * Get exception.
-     *
+     * 获得异常
      * @return exception. if no exception return null.
      */
     Throwable getException();
 
     /**
      * Has exception.
-     *
+     * 判断是否是异常
      * @return has exception.
      */
     boolean hasException();
@@ -58,7 +58,7 @@ public interface Result {
      * return getValue();
      * }
      * </code>
-     *
+     * 重新获取结果
      * @return result.
      * @throws if has exception throw it.
      */
@@ -74,21 +74,21 @@ public interface Result {
 
     /**
      * get attachments.
-     *
+     * 获得附加值集合
      * @return attachments.
      */
     Map<String, String> getAttachments();
 
     /**
      * get attachment by key.
-     *
+     * 获得附加值
      * @return attachment value.
      */
     String getAttachment(String key);
 
     /**
      * get attachment by key with default value.
-     *
+     * 获得附加值
      * @return attachment value.
      */
     String getAttachment(String key, String defaultValue);

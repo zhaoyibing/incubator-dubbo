@@ -28,7 +28,7 @@ public interface Protocol {
 
     /**
      * Get default port when user doesn't config the port.
-     *
+     * 获得默认的端口
      * @return default port
      */
     int getDefaultPort();
@@ -40,9 +40,9 @@ public interface Protocol {
      * 2. export() must be idempotent, that is, there's no difference between invoking once and invoking twice when
      * export the same URL<br>
      * 3. Invoker instance is passed in by the framework, protocol needs not to care <br>
-     *
-     * @param <T>     Service type
-     * @param invoker Service invoker
+     * 暴露服务方法，
+     * @param <T>     Service type 服务类型
+     * @param invoker Service invoker 服务的实体域
      * @return exporter reference for exported service, useful for unexport the service later
      * @throws RpcException thrown when error occurs during export the service, for example: port is occupied
      */
@@ -57,9 +57,9 @@ public interface Protocol {
      * protocol sends remote request in the `Invoker` implementation. <br>
      * 3. When there's check=false set in URL, the implementation must not throw exception but try to recover when
      * connection fails.
-     *
-     * @param <T>  Service type
-     * @param type Service class
+     * 引用服务方法
+     * @param <T>  Service type 服务类型
+     * @param type Service class 服务类名
      * @param url  URL address for the remote service
      * @return invoker service's local proxy
      * @throws RpcException when there's any error while connecting to the service provider

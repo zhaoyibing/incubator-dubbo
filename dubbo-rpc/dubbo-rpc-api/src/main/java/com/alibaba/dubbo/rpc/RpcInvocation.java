@@ -34,14 +34,29 @@ public class RpcInvocation implements Invocation, Serializable {
 
     private static final long serialVersionUID = -4355285085441097045L;
 
+    /**
+     * 方法名称
+     */
     private String methodName;
 
+    /**
+     * 参数类型集合
+     */
     private Class<?>[] parameterTypes;
 
+    /**
+     * 参数集合
+     */
     private Object[] arguments;
 
+    /**
+     * 附加值
+     */
     private Map<String, String> attachments;
 
+    /**
+     * 实体域
+     */
     private transient Invoker<?> invoker;
 
     public RpcInvocation() {
@@ -53,22 +68,29 @@ public class RpcInvocation implements Invocation, Serializable {
                 invocation.getInvoker());
         if (invoker != null) {
             URL url = invoker.getUrl();
+            // 添加path 的附加值
             setAttachment(Constants.PATH_KEY, url.getPath());
+            // 设置接口
             if (url.hasParameter(Constants.INTERFACE_KEY)) {
                 setAttachment(Constants.INTERFACE_KEY, url.getParameter(Constants.INTERFACE_KEY));
             }
+            // 设置group
             if (url.hasParameter(Constants.GROUP_KEY)) {
                 setAttachment(Constants.GROUP_KEY, url.getParameter(Constants.GROUP_KEY));
             }
+            // 设置版本号
             if (url.hasParameter(Constants.VERSION_KEY)) {
                 setAttachment(Constants.VERSION_KEY, url.getParameter(Constants.VERSION_KEY, "0.0.0"));
             }
+            // 设置超时配置
             if (url.hasParameter(Constants.TIMEOUT_KEY)) {
                 setAttachment(Constants.TIMEOUT_KEY, url.getParameter(Constants.TIMEOUT_KEY));
             }
+            // 设置token值
             if (url.hasParameter(Constants.TOKEN_KEY)) {
                 setAttachment(Constants.TOKEN_KEY, url.getParameter(Constants.TOKEN_KEY));
             }
+            // 设置application值
             if (url.hasParameter(Constants.APPLICATION_KEY)) {
                 setAttachment(Constants.APPLICATION_KEY, url.getParameter(Constants.APPLICATION_KEY));
             }
