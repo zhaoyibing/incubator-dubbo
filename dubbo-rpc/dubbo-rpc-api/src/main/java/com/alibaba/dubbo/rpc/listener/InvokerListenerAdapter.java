@@ -25,10 +25,19 @@ import com.alibaba.dubbo.rpc.RpcException;
  */
 public abstract class InvokerListenerAdapter implements InvokerListener {
 
+    /**
+     * 引用服务
+     * @param invoker
+     * @throws RpcException
+     */
     @Override
     public void referred(Invoker<?> invoker) throws RpcException {
     }
 
+    /**
+     * 销毁
+     * @param invoker
+     */
     @Override
     public void destroyed(Invoker<?> invoker) {
     }
