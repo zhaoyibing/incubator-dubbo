@@ -35,13 +35,23 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class AbstractProxyProtocol extends AbstractProtocol {
 
+    /**
+     * rpc的异常类集合
+     */
     private final List<Class<?>> rpcExceptions = new CopyOnWriteArrayList<Class<?>>();
 
+    /**
+     * 代理工厂
+     */
     private ProxyFactory proxyFactory;
 
     public AbstractProxyProtocol() {
     }
 
+    /**
+     * 把异常加入到集合
+     * @param exceptions
+     */
     public AbstractProxyProtocol(Class<?>... exceptions) {
         for (Class<?> exception : exceptions) {
             addRpcException(exception);
@@ -60,22 +70,37 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
         this.proxyFactory = proxyFactory;
     }
 
+    /**
+     * 暴露服务
+     * @param invoker Service invoker
+     * @param <T>
+     * @return
+     * @throws RpcException
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> Exporter<T> export(final Invoker<T> invoker) throws RpcException {
+        // 获得uri
         final String uri = serviceKey(invoker.getUrl());
+        // 获得服务暴露者
         Exporter<T> exporter = (Exporter<T>) exporterMap.get(uri);
         if (exporter != null) {
             return exporter;
         }
+        // 新建一个线程
         final Runnable runnable = doExport(proxyFactory.getProxy(invoker, true), invoker.getInterface(), invoker.getUrl());
         exporter = new AbstractExporter<T>(invoker) {
+            /**
+             * 取消暴露
+             */
             @Override
             public void unexport() {
                 super.unexport();
+                // 移除该key对应的服务暴露者
                 exporterMap.remove(uri);
                 if (runnable != null) {
                     try {
+                        // 启动线程
                         runnable.run();
                     } catch (Throwable t) {
                         logger.warn(t.getMessage(), t);
@@ -83,19 +108,31 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
                 }
             }
         };
+        // 加入集合
         exporterMap.put(uri, exporter);
         return exporter;
     }
 
+    /**
+     * 引用服务
+     * @param type Service class 服务类名
+     * @param url  URL address for the remote service
+     * @param <T>
+     * @return
+     * @throws RpcException
+     */
     @Override
     public <T> Invoker<T> refer(final Class<T> type, final URL url) throws RpcException {
+        // 通过代理获得实体域
         final Invoker<T> target = proxyFactory.getInvoker(doRefer(type, url), type, url);
         Invoker<T> invoker = new AbstractInvoker<T>(type, url) {
             @Override
             protected Result doInvoke(Invocation invocation) throws Throwable {
                 try {
+                    // 获得调用结果
                     Result result = target.invoke(invocation);
                     Throwable e = result.getException();
+                    // 如果抛出异常，则抛出相应异常
                     if (e != null) {
                         for (Class<?> rpcException : rpcExceptions) {
                             if (rpcException.isAssignableFrom(e.getClass())) {
@@ -105,6 +142,7 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
                     }
                     return result;
                 } catch (RpcException e) {
+                    // 抛出未知异常
                     if (e.getCode() == RpcException.UNKNOWN_EXCEPTION) {
                         e.setCode(getErrorCode(e.getCause()));
                     }
@@ -114,10 +152,19 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
                 }
             }
         };
+        // 加入集合
         invokers.add(invoker);
         return invoker;
     }
 
+    /**
+     * 生成rpc异常
+     * @param type
+     * @param url
+     * @param invocation
+     * @param e
+     * @return
+     */
     protected RpcException getRpcException(Class<?> type, URL url, Invocation invocation, Throwable e) {
         RpcException re = new RpcException("Failed to invoke remote service: " + type + ", method: "
                 + invocation.getMethodName() + ", cause: " + e.getMessage(), e);
@@ -125,14 +172,26 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
         return re;
     }
 
+    /**
+     * 返回ip地址
+     * @param url
+     * @return
+     */
     protected String getAddr(URL url) {
+        // 获得绑定的ip
         String bindIp = url.getParameter(Constants.BIND_IP_KEY, url.getHost());
         if (url.getParameter(Constants.ANYHOST_KEY, false)) {
             bindIp = Constants.ANYHOST_VALUE;
         }
+        // 返回ip地址
         return NetUtils.getIpByHost(bindIp) + ":" + url.getParameter(Constants.BIND_PORT_KEY, url.getPort());
     }
 
+    /**
+     * 返回未知异常的错误码
+     * @param e
+     * @return
+     */
     protected int getErrorCode(Throwable e) {
         return RpcException.UNKNOWN_EXCEPTION;
     }
