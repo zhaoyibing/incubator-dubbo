@@ -41,38 +41,70 @@ import java.util.concurrent.locks.ReentrantLock;
 final class LazyConnectExchangeClient implements ExchangeClient {
 
     // when this warning rises from invocation, program probably have bug.
+    /**
+     * 延迟连接请求错误key
+     */
     static final String REQUEST_WITH_WARNING_KEY = "lazyclient_request_with_warning";
     private final static Logger logger = LoggerFactory.getLogger(LazyConnectExchangeClient.class);
+    /**
+     * 是否在延迟连接请求时错误
+     */
     protected final boolean requestWithWarning;
+    /**
+     * url对象
+     */
     private final URL url;
+    /**
+     * 请求处理器
+     */
     private final ExchangeHandler requestHandler;
+    /**
+     * 连接锁
+     */
     private final Lock connectLock = new ReentrantLock();
     // lazy connect, initial state for connection
+    /**
+     * 初始化状态
+     */
     private final boolean initialState;
+    /**
+     * 客户端对象
+     */
     private volatile ExchangeClient client;
+    /**
+     * 错误次数
+     */
     private AtomicLong warningcount = new AtomicLong(0);
 
     public LazyConnectExchangeClient(URL url, ExchangeHandler requestHandler) {
         // lazy connect, need set send.reconnect = true, to avoid channel bad status.
+        // 默认有重连
         this.url = url.addParameter(Constants.SEND_RECONNECT_KEY, Boolean.TRUE.toString());
         this.requestHandler = requestHandler;
+        // 默认延迟连接初始化成功
         this.initialState = url.getParameter(Constants.LAZY_CONNECT_INITIAL_STATE_KEY, Constants.DEFAULT_LAZY_CONNECT_INITIAL_STATE);
+        // 默认没有错误
         this.requestWithWarning = url.getParameter(REQUEST_WITH_WARNING_KEY, false);
     }
 
 
     private void initClient() throws RemotingException {
+        // 如果客户端已经初始化，则直接返回
         if (client != null)
             return;
         if (logger.isInfoEnabled()) {
             logger.info("Lazy connect to " + url);
         }
+        // 获得连接锁
         connectLock.lock();
         try {
+            // 二次判空
             if (client != null)
                 return;
+            // 新建一个客户端
             this.client = Exchangers.connect(url, requestHandler);
         } finally {
+            // 释放锁
             connectLock.unlock();
         }
     }
@@ -112,6 +144,7 @@ final class LazyConnectExchangeClient implements ExchangeClient {
      */
     private void warning(Object request) {
         if (requestWithWarning) {
+            // 每5000次报错一次
             if (warningcount.get() % 5000 == 0) {
                 logger.warn(new IllegalStateException("safe guard client , should not be called ,must have a bug."));
             }

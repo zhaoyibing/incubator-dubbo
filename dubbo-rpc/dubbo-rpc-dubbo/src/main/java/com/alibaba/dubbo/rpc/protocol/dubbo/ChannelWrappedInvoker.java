@@ -39,8 +39,17 @@ import java.net.InetSocketAddress;
  */
 class ChannelWrappedInvoker<T> extends AbstractInvoker<T> {
 
+    /**
+     * 通道
+     */
     private final Channel channel;
+    /**
+     * 服务key
+     */
     private final String serviceKey;
+    /**
+     * 当前的客户端
+     */
     private final ExchangeClient currentClient;
 
     ChannelWrappedInvoker(Class<T> serviceType, Channel channel, URL url, String serviceKey) {
@@ -54,14 +63,19 @@ class ChannelWrappedInvoker<T> extends AbstractInvoker<T> {
     protected Result doInvoke(Invocation invocation) throws Throwable {
         RpcInvocation inv = (RpcInvocation) invocation;
         // use interface's name as service path to export if it's not found on client side
+        // 设置服务path，默认用接口名称
         inv.setAttachment(Constants.PATH_KEY, getInterface().getName());
+        // 设置回调的服务key
         inv.setAttachment(Constants.CALLBACK_SERVICE_KEY, serviceKey);
 
         try {
+            // 如果是异步的
             if (getUrl().getMethodParameter(invocation.getMethodName(), Constants.ASYNC_KEY, false)) { // may have concurrency issue
+                // 直接发送请求消息
                 currentClient.send(inv, getUrl().getMethodParameter(invocation.getMethodName(), Constants.SENT_KEY, false));
                 return new RpcResult();
             }
+            // 获得超时时间
             int timeout = getUrl().getMethodParameter(invocation.getMethodName(), Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT);
             if (timeout > 0) {
                 return (Result) currentClient.request(inv, timeout).get();
@@ -89,6 +103,9 @@ class ChannelWrappedInvoker<T> extends AbstractInvoker<T> {
 //        }
     }
 
+    /**
+     * 内部类
+     */
     public static class ChannelWrapper extends ClientDelegate {
 
         private final Channel channel;

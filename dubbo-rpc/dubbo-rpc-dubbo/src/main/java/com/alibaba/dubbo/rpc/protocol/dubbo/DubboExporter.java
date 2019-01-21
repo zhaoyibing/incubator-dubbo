@@ -27,8 +27,14 @@ import java.util.Map;
  */
 public class DubboExporter<T> extends AbstractExporter<T> {
 
+    /**
+     * 服务key
+     */
     private final String key;
 
+    /**
+     * 服务暴露者集合
+     */
     private final Map<String, Exporter<?>> exporterMap;
 
     public DubboExporter(Invoker<T> invoker, String key, Map<String, Exporter<?>> exporterMap) {
@@ -40,6 +46,7 @@ public class DubboExporter<T> extends AbstractExporter<T> {
     @Override
     public void unexport() {
         super.unexport();
+        // 从集合中移除该key
         exporterMap.remove(key);
     }
 
