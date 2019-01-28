@@ -55,15 +55,30 @@ import java.util.concurrent.TimeUnit;
 
 public class RestProtocol extends AbstractProxyProtocol {
 
+    /**
+     * 默认端口号
+     */
     private static final int DEFAULT_PORT = 80;
 
+    /**
+     * 服务器集合
+     */
     private final Map<String, RestServer> servers = new ConcurrentHashMap<String, RestServer>();
 
+    /**
+     * 服务器工厂
+     */
     private final RestServerFactory serverFactory = new RestServerFactory();
 
     // TODO in the future maybe we can just use a single rest client and connection manager
+    /**
+     * 客户端集合
+     */
     private final List<ResteasyClient> clients = Collections.synchronizedList(new LinkedList<ResteasyClient>());
 
+    /**
+     * 连接监控
+     */
     private volatile ConnectionMonitor connectionMonitor;
 
     public RestProtocol() {
@@ -79,26 +94,46 @@ public class RestProtocol extends AbstractProxyProtocol {
         return DEFAULT_PORT;
     }
 
+    /**
+     * 暴露服务
+     * @param impl
+     * @param type
+     * @param url
+     * @param <T>
+     * @return
+     * @throws RpcException
+     */
     @Override
     protected <T> Runnable doExport(T impl, Class<T> type, URL url) throws RpcException {
+        // 获得地址
         String addr = getAddr(url);
+        // 获得实现类
         Class implClass = (Class) StaticContext.getContext(Constants.SERVICE_IMPL_CLASS).get(url.getServiceKey());
+        // 获得服务
         RestServer server = servers.get(addr);
         if (server == null) {
+            // 创建服务器
             server = serverFactory.createServer(url.getParameter(Constants.SERVER_KEY, "jetty"));
+            // 开启服务器
             server.start(url);
+            // 加入集合
             servers.put(addr, server);
         }
 
+        // 获得contextPath
         String contextPath = getContextPath(url);
+        // 如果以servlet的方式
         if ("servlet".equalsIgnoreCase(url.getParameter(Constants.SERVER_KEY, "jetty"))) {
+            // 获得ServletContext
             ServletContext servletContext = ServletManager.getInstance().getServletContext(ServletManager.EXTERNAL_SERVER_PORT);
+            // 如果为空，则抛出异常
             if (servletContext == null) {
                 throw new RpcException("No servlet context found. Since you are using server='servlet', " +
                         "make sure that you've configured " + BootstrapListener.class.getName() + " in web.xml");
             }
             String webappPath = servletContext.getContextPath();
             if (StringUtils.isNotEmpty(webappPath)) {
+                // 检测配置是否正确
                 webappPath = webappPath.substring(1);
                 if (!contextPath.startsWith(webappPath)) {
                     throw new RpcException("Since you are using server='servlet', " +
@@ -111,8 +146,10 @@ public class RestProtocol extends AbstractProxyProtocol {
             }
         }
 
+        // 获得资源
         final Class resourceDef = GetRestful.getRootResourceClass(implClass) != null ? implClass : type;
 
+        // 部署服务器
         server.deploy(resourceDef, impl, contextPath);
 
         final RestServer s = server;
@@ -126,29 +163,45 @@ public class RestProtocol extends AbstractProxyProtocol {
         };
     }
 
+    /**
+     * 服务引用
+     * @param serviceType
+     * @param url
+     * @param <T>
+     * @return
+     * @throws RpcException
+     */
     @Override
     protected <T> T doRefer(Class<T> serviceType, URL url) throws RpcException {
+        // 如果连接监控为空，则创建
         if (connectionMonitor == null) {
             connectionMonitor = new ConnectionMonitor();
         }
 
         // TODO more configs to add
+        // 创建http连接池
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         // 20 is the default maxTotal of current PoolingClientConnectionManager
+        // 最大连接数
         connectionManager.setMaxTotal(url.getParameter(Constants.CONNECTIONS_KEY, 20));
+        // 最大的路由数
         connectionManager.setDefaultMaxPerRoute(url.getParameter(Constants.CONNECTIONS_KEY, 20));
 
+        // 添加监控
         connectionMonitor.addConnectionManager(connectionManager);
+        // 新建请求配置
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(url.getParameter(Constants.CONNECT_TIMEOUT_KEY, Constants.DEFAULT_CONNECT_TIMEOUT))
                 .setSocketTimeout(url.getParameter(Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT))
                 .build();
 
+        // 设置socket配置
         SocketConfig socketConfig = SocketConfig.custom()
                 .setSoKeepAlive(true)
                 .setTcpNoDelay(true)
                 .build();
 
+        // 创建http客户端
         CloseableHttpClient httpClient = HttpClientBuilder.create()
                 .setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
                     @Override
@@ -170,12 +223,17 @@ public class RestProtocol extends AbstractProxyProtocol {
                 .setDefaultSocketConfig(socketConfig)
                 .build();
 
+        // 创建ApacheHttpClient4Engine对应，为了使用resteasy
         ApacheHttpClient4Engine engine = new ApacheHttpClient4Engine(httpClient/*, localContext*/);
 
+        //  创建ResteasyClient对象
         ResteasyClient client = new ResteasyClientBuilder().httpEngine(engine).build();
+        // 加入集合
         clients.add(client);
 
+        // 设置过滤器
         client.register(RpcContextFilter.class);
+        // 注册各类组件
         for (String clazz : Constants.COMMA_SPLIT_PATTERN.split(url.getParameter(Constants.EXTENSION_KEY, ""))) {
             if (!StringUtils.isEmpty(clazz)) {
                 try {
@@ -187,6 +245,7 @@ public class RestProtocol extends AbstractProxyProtocol {
         }
 
         // TODO protocol
+        // 创建 Service Proxy 对象。
         ResteasyWebTarget target = client.target("http://" + url.getHost() + ":" + url.getPort() + "/" + getContextPath(url));
         return target.proxy(serviceType);
     }
@@ -201,6 +260,7 @@ public class RestProtocol extends AbstractProxyProtocol {
     public void destroy() {
         super.destroy();
 
+        // 关闭监控
         if (connectionMonitor != null) {
             connectionMonitor.shutdown();
         }
@@ -210,11 +270,13 @@ public class RestProtocol extends AbstractProxyProtocol {
                 if (logger.isInfoEnabled()) {
                     logger.info("Closing the rest server at " + entry.getKey());
                 }
+                // 停止每个服务
                 entry.getValue().stop();
             } catch (Throwable t) {
                 logger.warn("Error closing rest server", t);
             }
         }
+        // 清空集合
         servers.clear();
 
         if (logger.isInfoEnabled()) {
@@ -222,6 +284,7 @@ public class RestProtocol extends AbstractProxyProtocol {
         }
         for (ResteasyClient client : clients) {
             try {
+                // 关闭客户端
                 client.close();
             } catch (Throwable t) {
                 logger.warn("Error closing rest client", t);
@@ -236,7 +299,13 @@ public class RestProtocol extends AbstractProxyProtocol {
     }
 
     protected class ConnectionMonitor extends Thread {
+        /**
+         * 是否关闭
+         */
         private volatile boolean shutdown;
+        /**
+         * 连接池集合
+         */
         private final List<PoolingHttpClientConnectionManager> connectionManagers = Collections.synchronizedList(new LinkedList<PoolingHttpClientConnectionManager>());
 
         public void addConnectionManager(PoolingHttpClientConnectionManager connectionManager) {
@@ -250,13 +319,16 @@ public class RestProtocol extends AbstractProxyProtocol {
                     synchronized (this) {
                         wait(1000);
                         for (PoolingHttpClientConnectionManager connectionManager : connectionManagers) {
+                            // 关闭池中所有过期的连接
                             connectionManager.closeExpiredConnections();
                             // TODO constant
+                            // 关闭池中的空闲连接
                             connectionManager.closeIdleConnections(30, TimeUnit.SECONDS);
                         }
                     }
                 }
             } catch (InterruptedException ex) {
+                // 关闭
                 shutdown();
             }
         }

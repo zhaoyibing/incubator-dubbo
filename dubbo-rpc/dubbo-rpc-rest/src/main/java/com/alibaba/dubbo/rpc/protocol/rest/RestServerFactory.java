@@ -25,19 +25,30 @@ import com.alibaba.dubbo.remoting.http.HttpBinder;
  */
 public class RestServerFactory {
 
+    /**
+     * http绑定者
+     */
     private HttpBinder httpBinder;
 
     public void setHttpBinder(HttpBinder httpBinder) {
         this.httpBinder = httpBinder;
     }
 
+    /**
+     * 创建服务器
+     * @param name
+     * @return
+     */
     public RestServer createServer(String name) {
         // TODO move names to Constants
+        // 如果是servlet或者jetty或者tomcat，则创建DubboHttpServer
         if ("servlet".equalsIgnoreCase(name) || "jetty".equalsIgnoreCase(name) || "tomcat".equalsIgnoreCase(name)) {
             return new DubboHttpServer(httpBinder);
         } else if ("netty".equalsIgnoreCase(name)) {
+            // 如果是netty，那么直接创建netty服务器
             return new NettyServer();
         } else {
+            // 否则 抛出异常
             throw new IllegalArgumentException("Unrecognized server name: " + name);
         }
     }

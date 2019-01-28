@@ -29,6 +29,9 @@ public class ViolationReport implements Serializable {
 
     private static final long serialVersionUID = -130498234L;
 
+    /**
+     * 约束违反集合
+     */
     private List<RestConstraintViolation> constraintViolations;
 
     public List<RestConstraintViolation> getConstraintViolations() {
