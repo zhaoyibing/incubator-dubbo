@@ -20,7 +20,7 @@ public class ThriftUtils {
 
     /**
      * Generate class name which represents service arguments.
-     *
+     * 生成表示服务参数的类名
      * @param serviceName service name
      * @param methodName method name
      * @return method args class name or null
@@ -52,6 +52,12 @@ public class ThriftUtils {
 
     }
 
+    /**
+     * 生成表示方法结果的类名
+     * @param serviceName
+     * @param method
+     * @return
+     */
     public static String generateMethodResultClassName(String serviceName, String method) {
 
         int index = serviceName.lastIndexOf(".");
@@ -79,6 +85,11 @@ public class ThriftUtils {
 
     }
 
+    /**
+     * 生成set方法名
+     * @param fieldName
+     * @return
+     */
     public static String generateSetMethodName(String fieldName) {
 
         return new StringBuilder(16)
@@ -89,6 +100,11 @@ public class ThriftUtils {
 
     }
 
+    /**
+     * 生成get方法名
+     * @param fieldName
+     * @return
+     */
     public static String generateGetMethodName(String fieldName) {
         return new StringBuffer(16)
                 .append("get")
@@ -97,6 +113,12 @@ public class ThriftUtils {
                 .toString();
     }
 
+    /**
+     * 生成方法参数的类名
+     * @param serviceName
+     * @param methodName
+     * @return
+     */
     public static String generateMethodArgsClassNameThrift(String serviceName, String methodName) {
 
         int index = serviceName.indexOf("$");
@@ -113,6 +135,12 @@ public class ThriftUtils {
 
     }
 
+    /**
+     * 生成方法结果的类名
+     * @param serviceName
+     * @param methodName
+     * @return
+     */
     public static String generateMethodResultClassNameThrift(String serviceName, String methodName) {
 
         int index = serviceName.indexOf("$");

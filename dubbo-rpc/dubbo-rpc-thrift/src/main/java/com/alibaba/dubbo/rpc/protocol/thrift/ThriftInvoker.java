@@ -35,12 +35,24 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ThriftInvoker<T> extends AbstractInvoker<T> {
 
+    /**
+     * 客户端集合
+     */
     private final ExchangeClient[] clients;
 
+    /**
+     * 活跃的客户端索引
+     */
     private final AtomicPositiveInteger index = new AtomicPositiveInteger();
 
+    /**
+     * 销毁锁
+     */
     private final ReentrantLock destroyLock = new ReentrantLock();
 
+    /**
+     * invoker集合
+     */
     private final Set<Invoker<?>> invokers;
 
     public ThriftInvoker(Class<T> service, URL url, ExchangeClient[] clients) {
@@ -62,8 +74,10 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
 
         final String methodName;
 
+        // 获得方法名
         methodName = invocation.getMethodName();
 
+        // 设置附加值 path
         inv.setAttachment(Constants.PATH_KEY, getUrl().getPath());
 
         // for thrift codec
@@ -72,28 +86,38 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
 
         ExchangeClient currentClient;
 
+        // 如果只有一个连接的客户端，则直接返回
         if (clients.length == 1) {
             currentClient = clients[0];
         } else {
+            // 否则，取出下一个客户端，循环数组取
             currentClient = clients[index.getAndIncrement() % clients.length];
         }
 
         try {
+            // 获得超时时间
             int timeout = getUrl().getMethodParameter(
                     methodName, Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT);
 
             RpcContext.getContext().setFuture(null);
 
+            // 发起请求
             return (Result) currentClient.request(inv, timeout).get();
 
         } catch (TimeoutException e) {
+            // 抛出超时异常
             throw new RpcException(RpcException.TIMEOUT_EXCEPTION, e.getMessage(), e);
         } catch (RemotingException e) {
+            // 抛出网络异常
             throw new RpcException(RpcException.NETWORK_EXCEPTION, e.getMessage(), e);
         }
 
     }
 
+    /**
+     * 检测是否可用
+     * @return
+     */
     @Override
     public boolean isAvailable() {
 
@@ -102,6 +126,7 @@ public class ThriftInvoker<T> extends AbstractInvoker<T> {
         }
 
         for (ExchangeClient client : clients) {
+            // 只要有一个客户端连接，就是服务可用
             if (client.isConnected()
                     && !client.hasAttribute(Constants.CHANNEL_ATTRIBUTE_READONLY_KEY)) {
                 //cannot write == not Available ?
