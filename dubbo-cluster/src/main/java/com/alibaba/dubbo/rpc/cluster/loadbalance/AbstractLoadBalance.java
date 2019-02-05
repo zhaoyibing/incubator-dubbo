@@ -30,29 +30,60 @@ import java.util.List;
  */
 public abstract class AbstractLoadBalance implements LoadBalance {
 
+    /**
+     * 计算权重
+     * @param uptime
+     * @param warmup
+     * @param weight
+     * @return
+     */
     static int calculateWarmupWeight(int uptime, int warmup, int weight) {
+        // 计算权重 (uptime / warmup) * weight，进度百分比 * 权重
         int ww = (int) ((float) uptime / ((float) warmup / (float) weight));
+        // 权重范围为 [0, weight] 之间
         return ww < 1 ? 1 : (ww > weight ? weight : ww);
     }
 
+    /**
+     * 选择一个服务提供者invoker
+     * @param invokers   invokers.
+     * @param url        refer url
+     * @param invocation invocation.
+     * @param <T>
+     * @return
+     */
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) {
+        // 如果invokers为空则返回空
         if (invokers == null || invokers.isEmpty())
             return null;
+        // 如果invokers只有一个服务提供者，则返回一个
         if (invokers.size() == 1)
             return invokers.get(0);
+        // 调用doSelect进行选择
         return doSelect(invokers, url, invocation);
     }
 
     protected abstract <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation);
 
+    /**
+     * 获得某一个服务的权重
+     * @param invoker
+     * @param invocation
+     * @return
+     */
     protected int getWeight(Invoker<?> invoker, Invocation invocation) {
+        // 获得 weight 配置，即服务权重。默认为 100
         int weight = invoker.getUrl().getMethodParameter(invocation.getMethodName(), Constants.WEIGHT_KEY, Constants.DEFAULT_WEIGHT);
         if (weight > 0) {
+            // 获得启动时间戳
             long timestamp = invoker.getUrl().getParameter(Constants.REMOTE_TIMESTAMP_KEY, 0L);
             if (timestamp > 0L) {
+                // 获得启动总时长
                 int uptime = (int) (System.currentTimeMillis() - timestamp);
+                // 获得预热需要总时长。默认为10分钟
                 int warmup = invoker.getUrl().getParameter(Constants.WARMUP_KEY, Constants.DEFAULT_WARMUP);
+                // 如果服务运行时间小于预热时间，则重新计算服务权重，即降权
                 if (uptime > 0 && uptime < warmup) {
                     weight = calculateWarmupWeight(uptime, warmup, weight);
                 }
