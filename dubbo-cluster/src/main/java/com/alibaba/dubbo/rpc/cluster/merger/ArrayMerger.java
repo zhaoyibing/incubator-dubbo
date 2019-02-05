@@ -22,17 +22,25 @@ import java.lang.reflect.Array;
 
 public class ArrayMerger implements Merger<Object[]> {
 
+    /**
+     * 单例
+     */
     public static final ArrayMerger INSTANCE = new ArrayMerger();
 
     @Override
     public Object[] merge(Object[]... others) {
+        // 如果长度为0  则直接返回
         if (others.length == 0) {
             return null;
         }
+        // 总长
         int totalLen = 0;
+        // 遍历所有需要合并的对象
         for (int i = 0; i < others.length; i++) {
             Object item = others[i];
+            // 如果为数组
             if (item != null && item.getClass().isArray()) {
+                // 累加数组长度
                 totalLen += Array.getLength(item);
             } else {
                 throw new IllegalArgumentException((i + 1) + "th argument is not an array");
@@ -43,12 +51,17 @@ public class ArrayMerger implements Merger<Object[]> {
             return null;
         }
 
+        // 获得数组类型
         Class<?> type = others[0].getClass().getComponentType();
 
+        // 创建长度
         Object result = Array.newInstance(type, totalLen);
         int index = 0;
+        // 遍历需要合并的对象
         for (Object array : others) {
+            // 遍历每个数组中的数据
             for (int i = 0; i < Array.getLength(array); i++) {
+                // 加入到最终结果中
                 Array.set(result, index++, Array.get(array, i));
             }
         }
