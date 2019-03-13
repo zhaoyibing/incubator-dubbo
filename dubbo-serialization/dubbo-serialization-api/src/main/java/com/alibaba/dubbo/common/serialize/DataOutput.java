@@ -25,7 +25,7 @@ public interface DataOutput {
 
     /**
      * Write boolean.
-     *
+     * 输出boolean类型
      * @param v value.
      * @throws IOException
      */
@@ -33,7 +33,7 @@ public interface DataOutput {
 
     /**
      * Write byte.
-     *
+     * 输出byte类型
      * @param v value.
      * @throws IOException
      */
@@ -41,7 +41,7 @@ public interface DataOutput {
 
     /**
      * Write short.
-     *
+     * 输出short类型
      * @param v value.
      * @throws IOException
      */
@@ -49,7 +49,7 @@ public interface DataOutput {
 
     /**
      * Write integer.
-     *
+     * 输出integer类型
      * @param v value.
      * @throws IOException
      */
@@ -57,7 +57,7 @@ public interface DataOutput {
 
     /**
      * Write long.
-     *
+     * 输出long类型
      * @param v value.
      * @throws IOException
      */
@@ -65,7 +65,7 @@ public interface DataOutput {
 
     /**
      * Write float.
-     *
+     * 输出float类型
      * @param v value.
      * @throws IOException
      */
@@ -73,7 +73,7 @@ public interface DataOutput {
 
     /**
      * Write double.
-     *
+     * 输出double类型
      * @param v value.
      * @throws IOException
      */
@@ -81,7 +81,7 @@ public interface DataOutput {
 
     /**
      * Write string.
-     *
+     * 输出string类型
      * @param v value.
      * @throws IOException
      */
@@ -89,7 +89,7 @@ public interface DataOutput {
 
     /**
      * Write byte array.
-     *
+     * 输出byte数组
      * @param v value.
      * @throws IOException
      */
@@ -97,7 +97,7 @@ public interface DataOutput {
 
     /**
      * Write byte array.
-     *
+     * 输出byte数组中部分数据
      * @param v   value.
      * @param off offset.
      * @param len length.
@@ -107,7 +107,7 @@ public interface DataOutput {
 
     /**
      * Flush buffer.
-     *
+     * 刷新缓冲区
      * @throws IOException
      */
     void flushBuffer() throws IOException;

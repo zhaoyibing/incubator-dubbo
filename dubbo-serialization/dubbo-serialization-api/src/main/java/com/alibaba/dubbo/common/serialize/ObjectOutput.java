@@ -25,7 +25,7 @@ public interface ObjectOutput extends DataOutput {
 
     /**
      * write object.
-     *
+     * 输入object类型
      * @param obj object.
      */
     void writeObject(Object obj) throws IOException;

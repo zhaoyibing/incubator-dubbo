@@ -18,5 +18,8 @@ package com.alibaba.dubbo.common.serialize;
 
 public interface Cleanable {
 
+    /**
+     * 清理
+     */
     void cleanup();
 }

@@ -24,5 +24,9 @@ import java.util.Collection;
  */
 public interface SerializationOptimizer {
 
+    /**
+     * 需要序列化的类的集合
+     * @return
+     */
     Collection<Class> getSerializableClasses();
 }

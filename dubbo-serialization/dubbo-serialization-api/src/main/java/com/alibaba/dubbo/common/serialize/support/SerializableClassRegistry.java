@@ -21,15 +21,23 @@ import java.util.Set;
 
 public abstract class SerializableClassRegistry {
 
+    /**
+     * 可序列化类类的集合
+     */
     private static final Set<Class> registrations = new LinkedHashSet<Class>();
 
     /**
      * only supposed to be called at startup time
+     * 把可序列化的类加入到集合
      */
     public static void registerClass(Class clazz) {
         registrations.add(clazz);
     }
 
+    /**
+     * 获得可序列化的类的集合
+     * @return
+     */
     public static Set<Class> getRegisteredClasses() {
         return registrations;
     }
