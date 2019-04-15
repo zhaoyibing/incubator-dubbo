@@ -28,6 +28,9 @@ import org.apache.dubbo.common.utils.ConfigUtils;
 import org.apache.dubbo.common.utils.Holder;
 import org.apache.dubbo.common.utils.ReflectUtils;
 import org.apache.dubbo.common.utils.StringUtils;
+
+import com.alibaba.dubbo.common.extension.ZhaoYiBing;
+
 import org.apache.dubbo.common.utils.CollectionUtils;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -625,6 +628,7 @@ public class ExtensionLoader<T> {
     }
 
     // synchronized in getExtensionClasses
+    @ZhaoYiBing(date = "2019-04-13", value = "spi扩展实现，加载META-INF/*,**,*** 配置的接口实现类，key --> value 格式")
     private Map<String, Class<?>> loadExtensionClasses() {
         cacheDefaultExtensionName();
 
@@ -641,11 +645,14 @@ public class ExtensionLoader<T> {
     /**
      * extract and cache default extension name if exists
      */
+    @ZhaoYiBing("缓存@SPI接口上的默认实现类")
     private void cacheDefaultExtensionName() {
         final SPI defaultAnnotation = type.getAnnotation(SPI.class);
         if (defaultAnnotation != null) {
             String value = defaultAnnotation.value();
             if ((value = value.trim()).length() > 0) {
+            	
+            	@ZhaoYiBing("@SPI注解上配置的默认实现类的key，不允许有英文逗号")
                 String[] names = NAME_SEPARATOR.split(value);
                 if (names.length > 1) {
                     throw new IllegalStateException("More than 1 default extension name on extension " + type.getName()

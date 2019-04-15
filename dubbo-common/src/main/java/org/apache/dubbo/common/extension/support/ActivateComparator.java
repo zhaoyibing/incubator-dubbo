@@ -25,6 +25,12 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
+ * 2个Activate注解标记的类比较器。
+ * 
+ * int order
+ * String[] before
+ * String[] after
+ * 
  * OrderComparator
  */
 public class ActivateComparator implements Comparator<Object> {
