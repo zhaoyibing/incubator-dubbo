@@ -57,6 +57,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public abstract class AbstractRegistry implements Registry {
 
     // URL address separator, used in file cache, service provider URL separation
+	// URL的地址分隔符，在缓存文件中使用，服务提供者的URL分隔
     private static final char URL_SEPARATOR = ' ';
     // URL address separated regular expression for parsing the service provider URL list in the file cache
     private static final String URL_SPLIT = "\\s+";
