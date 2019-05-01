@@ -60,21 +60,28 @@ public abstract class AbstractRegistry implements Registry {
 	// URL的地址分隔符，在缓存文件中使用，服务提供者的URL分隔
     private static final char URL_SEPARATOR = ' ';
     // URL address separated regular expression for parsing the service provider URL list in the file cache
+    // URL地址分隔正则表达式，用于解析文件缓存中服务提供者URL列表
     private static final String URL_SPLIT = "\\s+";
     // Log output
+    // 日志输出
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     // Local disk cache, where the special key value.registries records the list of registry centers, and the others are the list of notified service providers
+	// 本地磁盘缓存，有一个特殊的key值为registies，记录的是注册中心列表，其他记录的都是服务提供者列表
     private final Properties properties = new Properties();
     // File cache timing writing
+    // 缓存写入执行器
     private final ExecutorService registryCacheExecutor = Executors.newFixedThreadPool(1, new NamedThreadFactory("DubboSaveRegistryCache", true));
     // Is it synchronized to save the file
+    // 是否同步保存文件标志
     private final boolean syncSaveFile;
+ 	//数据版本号
     private final AtomicLong lastCacheChanged = new AtomicLong();
     private final Set<URL> registered = new ConcurrentHashSet<>();
     private final ConcurrentMap<URL, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>();
     private final ConcurrentMap<URL, Map<String, List<URL>>> notified = new ConcurrentHashMap<>();
     private URL registryUrl;
     // Local disk cache file
+    // 本地磁盘缓存文件，缓存注册中心的数据
     private File file;
 
     public AbstractRegistry(URL url) {
