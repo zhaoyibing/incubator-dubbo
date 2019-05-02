@@ -42,6 +42,18 @@ public interface RegistryFactory {
      * @param url Registry address, is not allowed to be empty
      * @return Registry reference, never return empty value
      */
+	
+    /**
+     *	连接注册中心：
+     *	1.当check=false时，不检查连接，否则在连接不上时抛出异常
+     *	2.支持URL上的username:password权限认证
+     *	3.支持backup=10.20.153.10备选注册中心集群地址
+     *	4.支持file=registry.cache本地磁盘文件缓存
+     *	5.支持timeout=1000 请求超时设置
+     *	6.支持session=60000 会话超时活过期设置
+     * 	注释者：zhaoyibing
+     * 	时间：2019年5月2日 下午7:55:19
+     */
     @Adaptive({"protocol"})
     Registry getRegistry(URL url);
 
