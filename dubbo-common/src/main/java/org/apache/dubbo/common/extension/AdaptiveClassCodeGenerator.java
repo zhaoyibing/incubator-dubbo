@@ -31,6 +31,11 @@ import org.apache.dubbo.common.utils.StringUtils;
 /**
  * Code generator for Adaptive class
  */
+/**
+ *	@desc:适配器类的代码生成器
+ * 	@author：zhaoyibing
+ * 	@time：2019年5月5日 下午10:12:08
+ */
 public class AdaptiveClassCodeGenerator {
     
     private static final Logger logger = LoggerFactory.getLogger(AdaptiveClassCodeGenerator.class);
