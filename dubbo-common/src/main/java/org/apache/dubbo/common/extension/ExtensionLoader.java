@@ -65,32 +65,42 @@ public class ExtensionLoader<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ExtensionLoader.class);
 
+    @ZhaoYiBing("扫描文件的路径")
     private static final String SERVICES_DIRECTORY = "META-INF/services/";
 
     private static final String DUBBO_DIRECTORY = "META-INF/dubbo/";
 
     private static final String DUBBO_INTERNAL_DIRECTORY = DUBBO_DIRECTORY + "internal/";
 
+    @ZhaoYiBing("spi接口实现类的名称key分隔符")
     private static final Pattern NAME_SEPARATOR = Pattern.compile("\\s*[,]+\\s*");
 
+    @ZhaoYiBing("缓存，一个class，一个ExtensionLoader")
     private static final ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>();
 
+    @ZhaoYiBing("缓存，一个class，一个实例")
     private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>();
 
     // ==============================
-
+    @ZhaoYiBing("class  T ")
     private final Class<?> type;
 
     private final ExtensionFactory objectFactory;
 
+    @ZhaoYiBing("interface 对应的实现类在文件中配置的key名称 ")
     private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>();
-
+    
+    @ZhaoYiBing("与cacheNames 相反，key为字符串，value为class")
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();
 
     private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>();
     private final Holder<Object> cachedAdaptiveInstance = new Holder<>();
+    
+    @ZhaoYiBing("@Adaptive 注解的 type类型的实现类，默认只能有一个，不可有多个")
     private volatile Class<?> cachedAdaptiveClass = null;
+    
+    @ZhaoYiBing("@SPI 上注解的默认value。默认使用的实现类。")
     private String cachedDefaultName;
     private volatile Throwable createAdaptiveInstanceError;
 
@@ -98,15 +108,18 @@ public class ExtensionLoader<T> {
 
     private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<>();
 
+    @ZhaoYiBing("构造函数private，不允许外部new。")
     private ExtensionLoader(Class<?> type) {
         this.type = type;
         objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
     }
 
+    @ZhaoYiBing("判断class是否有SPI的注解。")
     private static <T> boolean withExtensionAnnotation(Class<T> type) {
         return type.isAnnotationPresent(SPI.class);
     }
 
+    @ZhaoYiBing("静态方法。根据class获取指定类型的ExtensionLoader。在此方法里面new 的 ExtensionLoader。")
     @SuppressWarnings("unchecked")
     public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
         if (type == null) {
@@ -142,10 +155,12 @@ public class ExtensionLoader<T> {
         }
     }
 
+    @ZhaoYiBing("")
     private static ClassLoader findClassLoader() {
         return ClassHelper.getClassLoader(ExtensionLoader.class);
     }
 
+    @ZhaoYiBing("")
     public String getExtensionName(T extensionInstance) {
         return getExtensionName(extensionInstance.getClass());
     }
@@ -611,6 +626,7 @@ public class ExtensionLoader<T> {
         return getExtensionClasses().get(name);
     }
 
+    @ZhaoYiBing("load class")
     private Map<String, Class<?>> getExtensionClasses() {
         Map<String, Class<?>> classes = cachedClasses.get();
         if (classes == null) {
@@ -730,6 +746,7 @@ public class ExtensionLoader<T> {
         } else if (isWrapperClass(clazz)) {
             cacheWrapperClass(clazz);
         } else {
+        	//@ZhaoYiBing("默认的无参构造函数")
             clazz.getConstructor();
             if (StringUtils.isEmpty(name)) {
                 name = findAnnotationName(clazz);
@@ -791,6 +808,7 @@ public class ExtensionLoader<T> {
     /**
      * cache Adaptive class which is annotated with <code>Adaptive</code>
      */
+    @ZhaoYiBing
     private void cacheAdaptiveClass(Class<?> clazz) {
         if (cachedAdaptiveClass == null) {
             cachedAdaptiveClass = clazz;
@@ -818,6 +836,7 @@ public class ExtensionLoader<T> {
      * <p>
      * which has Constructor with given class type as its only argument
      */
+    @ZhaoYiBing("判断类是否为包装类，根据构造方法的参数判断")
     private boolean isWrapperClass(Class<?> clazz) {
         try {
             clazz.getConstructor(type);

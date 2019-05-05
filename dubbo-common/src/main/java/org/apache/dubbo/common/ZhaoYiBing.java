@@ -8,7 +8,14 @@ import java.lang.annotation.Target;
 
 @Documented
 @Retention(RetentionPolicy.SOURCE)
-@Target( value = {ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.LOCAL_VARIABLE})
+@Target( value = {
+		ElementType.TYPE, 
+		ElementType.METHOD, 
+		ElementType.FIELD,
+		ElementType.ANNOTATION_TYPE, 
+		ElementType.CONSTRUCTOR, 
+		ElementType.LOCAL_VARIABLE
+		})
 public @interface ZhaoYiBing {
 
 	String value() default "";
