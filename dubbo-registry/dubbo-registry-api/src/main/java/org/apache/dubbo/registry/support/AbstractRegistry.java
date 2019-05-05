@@ -246,7 +246,9 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     *	从文件缓存中查找URL
+     *	从文件缓存中查找URL，key : value 格式在哪儿定的：
+     *	@see #saveProperties(URL url)
+     *	
      * 	注释者：zhaoyibing
      * 	时间：2019年5月2日 下午8:18:09
      */
@@ -531,7 +533,8 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     *	保存本地缓存
+     *	保存本地缓存，将url中的信息保存到properties属性中,在getCacheUrls中取出使用
+     *	@see #getCacheUrls(URL)
      * 	注释者：zhaoyibing
      * 	时间：2019年5月2日 下午9:55:39
      */
