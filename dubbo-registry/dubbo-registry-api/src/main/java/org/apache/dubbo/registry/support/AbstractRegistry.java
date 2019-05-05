@@ -169,9 +169,10 @@ public abstract class AbstractRegistry implements Registry {
     }
 
     /**
-     *	将集合中的数据存储到文件中
+     *	将集合中的数据存储到文件中, 将数据全部存到file
      * 	注释者：zhaoyibing
      * 	时间：2019年5月1日 下午9:21:52
+     *  @see #saveProperties(URL)
      */
     public void doSaveProperties(long version) {
     	// 如果版本号比当前版本老，则不保存
@@ -379,12 +380,12 @@ public abstract class AbstractRegistry implements Registry {
         /*
          * 	上面2句等效于
          * 
-	     *  Set<NotifyListener> listeners2 = subscribed.get(url);
-	     *   if (listeners2 == null) {
+	     *  Set<NotifyListener> listeners = subscribed.get(url);
+	     *   if (listeners == null) {
 		 *		subscribed.putIfAbsent(url, new ConcurrentHashSet<NotifyListener>());
-		 *		listeners2 = subscribed.get(url);
+		 *		listeners = subscribed.get(url);
 		 *	}
-	     *   listeners2.add(listener);
+	     *   listeners.add(listener);
          */
         
     }
@@ -534,9 +535,11 @@ public abstract class AbstractRegistry implements Registry {
 
     /**
      *	保存本地缓存，将url中的信息保存到properties属性中,在getCacheUrls中取出使用
+     *	只保存单个消费者url的数据
      *	@see #getCacheUrls(URL)
      * 	注释者：zhaoyibing
      * 	时间：2019年5月2日 下午9:55:39
+     *  @see #doSaveProperties(long)
      */
     private void saveProperties(URL url) {
         if (file == null) {

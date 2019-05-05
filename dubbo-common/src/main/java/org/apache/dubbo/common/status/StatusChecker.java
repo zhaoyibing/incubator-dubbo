@@ -21,6 +21,11 @@ import org.apache.dubbo.common.extension.SPI;
 /**
  * StatusChecker
  */
+/**
+ * @desc:状态校验接口
+ * @author: zhaoyibing
+ * @time: 2019年5月5日 下午4:01:53
+ */
 @SPI
 public interface StatusChecker {
 
