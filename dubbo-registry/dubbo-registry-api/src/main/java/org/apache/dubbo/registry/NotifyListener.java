@@ -39,6 +39,18 @@ public interface NotifyListener {
      *
      * @param urls The list of registered information , is always not empty. The meaning is the same as the return value of {@link org.apache.dubbo.registry.RegistryService#lookup(URL)}.
      */
+	
+	/**
+	 * 	当收到服务变更通知时触发：
+	 * 	遵循规约：
+	 * 1.总是以服务接口和数据类型为维度全量通知。即不会通知一个服务的同类型的部分数据，用户不需要对比上一次通知结果
+	 * 2.订阅时的第一次通知，必须是一个服务的所有类型数据的全量通知
+	 * 3.在变更时，语序通知不同类型的数据，比如：providers, consumers, routers, overrides.只允许通知其中一种类型，但此类型的数据必须是完整的，而不是增量的
+	 * 4.如果一种类型的数据为空，需通知一个empty协议并带category参数的标识性URL数据。
+	 * 5.通知者(即注册中心实现)需保证通知的顺序，比如：单线程推送，队列串行化，带版本对比
+	 * 
+	 * @param urls
+	 */
     void notify(List<URL> urls);
 
 }

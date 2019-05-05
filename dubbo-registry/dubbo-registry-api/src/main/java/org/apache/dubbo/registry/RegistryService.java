@@ -40,6 +40,19 @@ public interface RegistryService {
      *
      * @param url  Registration information , is not allowed to be empty, e.g: dubbo://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
      */
+	
+	/**
+	 *	注册服务.
+	 * 
+	 *	注册需支持的规约：
+	 * 1.当url设置了 check=false 时. 注册失败时不抛出异常，后台定时重试，否则抛出异常。
+	 * 2.当url设置了dynamic=false时，则需持久存储，否则，当注册者出现断电等异常情况退出时需自动删除.
+	 * 3.当url设置了category=routers， 表示分类存储，缺省值为providers，可以按分类部分通知数据。
+	 * 4.当注册中心重启、网络抖动，不能丢失数据，包括断线自动删除数据。
+	 * 5.允许URI相同但参数不同的URL并存，不能覆盖。
+	 * 
+	 * @param url
+	 */
     void register(URL url);
 
     /**
@@ -50,6 +63,16 @@ public interface RegistryService {
      * 2. Unregister according to the full url match.<br>
      *
      * @param url Registration information , is not allowed to be empty, e.g: dubbo://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
+     */
+    
+    /**
+     * 	取消注册服务
+     *	
+     *	取消注册需遵循的规约：
+     *	1.如果是dynamic=false的持久存储数据，找不到注册数据，则抛IllegalStateException，否则忽略。
+     *	2.按全URL匹配取消注册
+     *
+     * @param url
      */
     void unregister(URL url);
 
@@ -68,6 +91,21 @@ public interface RegistryService {
      * @param url      Subscription condition, not allowed to be empty, e.g. consumer://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
      * @param listener A listener of the change event, not allowed to be empty
      */
+    
+    /**
+     *	订阅服务
+     *
+     *	订阅服务需遵循的规约：
+     *1.当URL设置了check=false，订阅失败后不报错，在后台定时重试。
+     *2.当URL设置了category=routers,只通知指定的分类数据。多个分类用逗号分隔，并允许星号匹配，这表示订阅了所有分类数据。
+     *3.允许以interface,group,version,classifier作为条件查询，如：interface=org.apache.dubbo.foo.BarService&version=1.0.0
+     *4.并且查询条件允许星号匹配，订阅所有接口的所有分组的所有版本，如：interface=*&group=*&version=*&classifier=*
+     *5.当注册中心重启，网络抖动，需自动恢复订阅请求。
+     *6.允许URI相同但参数不同的URL并存，不能覆盖。
+     *7.必须阻塞订阅过程，等第一次通知完后再返回。
+     * @param url
+     * @param listener
+     */
     void subscribe(URL url, NotifyListener listener);
 
     /**
@@ -80,6 +118,15 @@ public interface RegistryService {
      * @param url      Subscription condition, not allowed to be empty, e.g. consumer://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
      * @param listener A listener of the change event, not allowed to be empty
      */
+    
+    /**
+     *	取消订阅服务
+     *	规约：
+     *	1.如果没订阅，直接忽略。
+     *	2.按全URL匹配取消订阅
+     * @param url
+     * @param listener
+     */
     void unsubscribe(URL url, NotifyListener listener);
 
     /**
@@ -88,6 +135,13 @@ public interface RegistryService {
      * @param url Query condition, is not allowed to be empty, e.g. consumer://10.20.153.10/org.apache.dubbo.foo.BarService?version=1.0.0&application=kylin
      * @return The registered information list, which may be empty, the meaning is the same as the parameters of {@link org.apache.dubbo.registry.NotifyListener#notify(List<URL>)}.
      * @see org.apache.dubbo.registry.NotifyListener#notify(List)
+     */
+    
+    /**
+     *	查询注册列表，与订阅的推模式相对应，这里为拉模式，只返回一次结果。
+     *	
+     * @param url
+     * @return
      */
     List<URL> lookup(URL url);
 
