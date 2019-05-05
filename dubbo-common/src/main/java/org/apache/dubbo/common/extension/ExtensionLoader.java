@@ -18,6 +18,7 @@ package org.apache.dubbo.common.extension;
 
 import org.apache.dubbo.common.Constants;
 import org.apache.dubbo.common.URL;
+import org.apache.dubbo.common.ZhaoYiBing;
 import org.apache.dubbo.common.extension.support.ActivateComparator;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
@@ -28,9 +29,6 @@ import org.apache.dubbo.common.utils.ConfigUtils;
 import org.apache.dubbo.common.utils.Holder;
 import org.apache.dubbo.common.utils.ReflectUtils;
 import org.apache.dubbo.common.utils.StringUtils;
-
-import com.alibaba.dubbo.common.extension.ZhaoYiBing;
-
 import org.apache.dubbo.common.utils.CollectionUtils;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -63,36 +61,56 @@ import java.util.regex.Pattern;
  * @see org.apache.dubbo.common.extension.Adaptive
  * @see org.apache.dubbo.common.extension.Activate
  */
+/**
+ * @desc: load extensions
+ * @author: zhaoyibing
+ * @time: 2019年5月5日 下午4:31:19
+ */
 public class ExtensionLoader<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ExtensionLoader.class);
 
+    // jdk的SPI扩展机制中配置文件路径， dubbo为了兼容jdk的SPI
     private static final String SERVICES_DIRECTORY = "META-INF/services/";
-
+    // 用于用户自定义的扩展实现配置文件存放路径
     private static final String DUBBO_DIRECTORY = "META-INF/dubbo/";
-
+    // 用于dubbo内部提供的扩展实现配置文件存放路径
     private static final String DUBBO_INTERNAL_DIRECTORY = DUBBO_DIRECTORY + "internal/";
 
+    // spi接口实现类的名称key分隔符
     private static final Pattern NAME_SEPARATOR = Pattern.compile("\\s*[,]+\\s*");
 
+    // 扩展加载器集合，key为扩展接口，例如Protocol等
     private static final ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>();
 
+    // 扩展实现集合，key为扩展实现类，value为扩展对象
+    // 例如key为Class<DubboProtocol>，value为DubboProtocol对象
     private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>();
 
     // ==============================
-
+    // 扩展接口，如Protocol等
     private final Class<?> type;
 
+    // 对象工厂，获得扩展实现的实例，用于injectExtension方法中将扩展实现类的实例注入到相关的依赖属性。
+    // 比如StubProxyFactoryWrapper类中有Protocol protocol属性，就是通过set方法把Protocol的实现类实例赋值
     private final ExtensionFactory objectFactory;
+    
+    // 以下提到的扩展名就是在配置文件中的key值，类似于“dubbo”等
 
+    @ZhaoYiBing("interface 对应的实现类在文件中配置的key名称 ")
     private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>();
-
+    
+    @ZhaoYiBing("与cacheNames 相反，key为字符串，value为class")
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();
 
     private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>();
     private final Holder<Object> cachedAdaptiveInstance = new Holder<>();
+    
+    @ZhaoYiBing("@Adaptive 注解的 type类型的实现类，默认只能有一个，不可有多个")
     private volatile Class<?> cachedAdaptiveClass = null;
+    
+    @ZhaoYiBing("@SPI 上注解的默认value。默认使用的实现类。")
     private String cachedDefaultName;
     private volatile Throwable createAdaptiveInstanceError;
 
@@ -100,15 +118,18 @@ public class ExtensionLoader<T> {
 
     private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<>();
 
+    @ZhaoYiBing("构造函数private，不允许外部new。")
     private ExtensionLoader(Class<?> type) {
         this.type = type;
         objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
     }
 
+    @ZhaoYiBing("判断class是否有SPI的注解。")
     private static <T> boolean withExtensionAnnotation(Class<T> type) {
         return type.isAnnotationPresent(SPI.class);
     }
 
+    @ZhaoYiBing("静态方法。根据class获取指定类型的ExtensionLoader。在此方法里面new 的 ExtensionLoader。")
     @SuppressWarnings("unchecked")
     public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
         if (type == null) {
@@ -144,10 +165,12 @@ public class ExtensionLoader<T> {
         }
     }
 
+    @ZhaoYiBing("")
     private static ClassLoader findClassLoader() {
         return ClassHelper.getClassLoader(ExtensionLoader.class);
     }
 
+    @ZhaoYiBing("")
     public String getExtensionName(T extensionInstance) {
         return getExtensionName(extensionInstance.getClass());
     }
@@ -613,6 +636,7 @@ public class ExtensionLoader<T> {
         return getExtensionClasses().get(name);
     }
 
+    @ZhaoYiBing("load class")
     private Map<String, Class<?>> getExtensionClasses() {
         Map<String, Class<?>> classes = cachedClasses.get();
         if (classes == null) {
@@ -732,6 +756,7 @@ public class ExtensionLoader<T> {
         } else if (isWrapperClass(clazz)) {
             cacheWrapperClass(clazz);
         } else {
+        	//@ZhaoYiBing("默认的无参构造函数")
             clazz.getConstructor();
             if (StringUtils.isEmpty(name)) {
                 name = findAnnotationName(clazz);
@@ -793,6 +818,7 @@ public class ExtensionLoader<T> {
     /**
      * cache Adaptive class which is annotated with <code>Adaptive</code>
      */
+    @ZhaoYiBing
     private void cacheAdaptiveClass(Class<?> clazz) {
         if (cachedAdaptiveClass == null) {
             cachedAdaptiveClass = clazz;
@@ -820,6 +846,7 @@ public class ExtensionLoader<T> {
      * <p>
      * which has Constructor with given class type as its only argument
      */
+    @ZhaoYiBing("判断类是否为包装类，根据构造方法的参数判断")
     private boolean isWrapperClass(Class<?> clazz) {
         try {
             clazz.getConstructor(type);

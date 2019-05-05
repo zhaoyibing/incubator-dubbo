@@ -25,11 +25,24 @@ import org.apache.dubbo.rpc.RpcException;
 /**
  * @date 2017/11/23
  */
+/**
+ * @desc:运用在Dubbo QOS中,服务提供者的Invoker的包装器
+ * @author: zhaoyibing
+ * @time: 2019年5月5日 下午3:57:05
+ * 
+ * @see ConsumerInvokerWrapper
+ * @see ProviderConsumerRegTable
+ */
 public class ProviderInvokerWrapper<T> implements Invoker {
+	// invoker 对象
     private Invoker<T> invoker;
+    // 原始url
     private URL originUrl;
+    // 注册中心url
     private URL registryUrl;
+    // 服务提供者url
     private URL providerUrl;
+    // 是否注册
     private volatile boolean isReg;
 
     public ProviderInvokerWrapper(Invoker<T> invoker,URL registryUrl,URL providerUrl) {

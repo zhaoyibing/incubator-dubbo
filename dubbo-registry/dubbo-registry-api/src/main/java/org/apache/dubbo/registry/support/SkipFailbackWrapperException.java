@@ -23,6 +23,13 @@ package org.apache.dubbo.registry.support;
  *
  * @see FailbackRegistry
  */
+/**
+ * @desc:自定义的是一个跳过失败重试的异常
+ * @author: zhaoyibing
+ * @time: 2019年5月5日 下午3:59:49
+ * 
+ * @see FailbackRegistry
+ */
 public class SkipFailbackWrapperException extends RuntimeException {
     public SkipFailbackWrapperException(Throwable cause) {
         super(cause);
