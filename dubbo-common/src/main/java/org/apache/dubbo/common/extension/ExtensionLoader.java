@@ -61,31 +61,41 @@ import java.util.regex.Pattern;
  * @see org.apache.dubbo.common.extension.Adaptive
  * @see org.apache.dubbo.common.extension.Activate
  */
+/**
+ * @desc: load extensions
+ * @author: zhaoyibing
+ * @time: 2019年5月5日 下午4:31:19
+ */
 public class ExtensionLoader<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ExtensionLoader.class);
 
-    @ZhaoYiBing("扫描文件的路径")
+    // jdk的SPI扩展机制中配置文件路径， dubbo为了兼容jdk的SPI
     private static final String SERVICES_DIRECTORY = "META-INF/services/";
-
+    // 用于用户自定义的扩展实现配置文件存放路径
     private static final String DUBBO_DIRECTORY = "META-INF/dubbo/";
-
+    // 用于dubbo内部提供的扩展实现配置文件存放路径
     private static final String DUBBO_INTERNAL_DIRECTORY = DUBBO_DIRECTORY + "internal/";
 
-    @ZhaoYiBing("spi接口实现类的名称key分隔符")
+    // spi接口实现类的名称key分隔符
     private static final Pattern NAME_SEPARATOR = Pattern.compile("\\s*[,]+\\s*");
 
-    @ZhaoYiBing("缓存，一个class，一个ExtensionLoader")
+    // 扩展加载器集合，key为扩展接口，例如Protocol等
     private static final ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>();
 
-    @ZhaoYiBing("缓存，一个class，一个实例")
+    // 扩展实现集合，key为扩展实现类，value为扩展对象
+    // 例如key为Class<DubboProtocol>，value为DubboProtocol对象
     private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>();
 
     // ==============================
-    @ZhaoYiBing("class  T ")
+    // 扩展接口，如Protocol等
     private final Class<?> type;
 
+    // 对象工厂，获得扩展实现的实例，用于injectExtension方法中将扩展实现类的实例注入到相关的依赖属性。
+    // 比如StubProxyFactoryWrapper类中有Protocol protocol属性，就是通过set方法把Protocol的实现类实例赋值
     private final ExtensionFactory objectFactory;
+    
+    // 以下提到的扩展名就是在配置文件中的key值，类似于“dubbo”等
 
     @ZhaoYiBing("interface 对应的实现类在文件中配置的key名称 ")
     private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>();
