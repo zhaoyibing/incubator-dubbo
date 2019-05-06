@@ -100,7 +100,7 @@ public class ExtensionLoader<T> {
     // 缓存的扩展名 和 扩展类映射， 和 cacheClasses 的key 、 value 对换
     private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<>();
    
-    // 缓存的扩展实现类
+    // 缓存的扩展实现类 key为扩展名 value为类
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();
 
     // 扩展名与加有@Activate的自动激活类的映射
@@ -859,6 +859,11 @@ public class ExtensionLoader<T> {
     /**
      * cache name
      */
+    /**
+     * @desc:扩展名 和 扩展类映射
+     * @author: zhaoyibing
+     * @time: 2019年5月6日 下午5:44:42
+     */
     private void cacheName(Class<?> clazz, String name) {
         if (!cachedNames.containsKey(clazz)) {
             cachedNames.put(clazz, name);
@@ -867,6 +872,13 @@ public class ExtensionLoader<T> {
 
     /**
      * put clazz in extensionClasses
+     */
+    /**
+     * @desc:将class保存到extensionClasses，extensionClasses最后保存到 cachedClasses
+     * @author: zhaoyibing
+     * @time: 2019年5月6日 下午5:48:14
+     * 
+     * @see #loadExtensionClasses()
      */
     private void saveInExtensionClass(Map<String, Class<?>> extensionClasses, Class<?> clazz, String name) {
         Class<?> c = extensionClasses.get(name);
@@ -924,6 +936,11 @@ public class ExtensionLoader<T> {
      * cache wrapper class
      * <p>
      * like: ProtocolFilterWrapper, ProtocolListenerWrapper
+     */
+    /**
+     * @desc:缓存cachedWrapperClasses
+     * @author: zhaoyibing
+     * @time: 2019年5月6日 下午5:45:27
      */
     private void cacheWrapperClass(Class<?> clazz) {
         if (cachedWrapperClasses == null) {
