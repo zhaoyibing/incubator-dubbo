@@ -25,6 +25,11 @@ import org.apache.dubbo.common.extension.SPI;
  * @see org.apache.dubbo.remoting.Transporter#bind(org.apache.dubbo.common.URL, ChannelHandler)
  * @see org.apache.dubbo.remoting.Transporter#connect(org.apache.dubbo.common.URL, ChannelHandler)
  */
+/**
+ * @desc:该接口是辅助channel中的逻辑处理，@SPI注解的类，可扩展接口
+ * @author: zhaoyibing
+ * @time: 2019年5月18日 下午4:48:44
+ */
 @SPI
 public interface ChannelHandler {
 
@@ -33,12 +38,22 @@ public interface ChannelHandler {
      *
      * @param channel channel.
      */
+    /**
+     * @desc:连接该通道
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:49:42
+     */
     void connected(Channel channel) throws RemotingException;
 
     /**
      * on channel disconnected.
      *
      * @param channel channel.
+     */
+    /**
+     * @desc:断开该通道
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:50:01
      */
     void disconnected(Channel channel) throws RemotingException;
 
@@ -47,6 +62,11 @@ public interface ChannelHandler {
      *
      * @param channel channel.
      * @param message message.
+     */
+    /**
+     * @desc:往该通道发送消息
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:50:17
      */
     void sent(Channel channel, Object message) throws RemotingException;
 
@@ -63,6 +83,11 @@ public interface ChannelHandler {
      *
      * @param channel   channel.
      * @param exception exception.
+     */
+    /**
+     * @desc:从这个通道内捕获异常
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:50:33
      */
     void caught(Channel channel, Throwable exception) throws RemotingException;
 

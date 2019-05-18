@@ -25,13 +25,28 @@ import org.apache.dubbo.common.Resetable;
  *
  * @see org.apache.dubbo.remoting.Transporter#connect(org.apache.dubbo.common.URL, ChannelHandler)
  */
+/**
+ * @desc:客户端接口，继承Channel是因为客户端跟通道是一一对应的
+ * @author: zhaoyibing
+ * @time: 2019年5月18日 下午4:51:31
+ */
 public interface Client extends Endpoint, Channel, Resetable, IdleSensible {
 
     /**
      * reconnect.
      */
+    /**
+     * @desc:重连
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:52:26
+     */
     void reconnect() throws RemotingException;
 
+    /**
+     * @desc:重置
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:52:32
+     */
     @Deprecated
     void reset(org.apache.dubbo.common.Parameters parameters);
 

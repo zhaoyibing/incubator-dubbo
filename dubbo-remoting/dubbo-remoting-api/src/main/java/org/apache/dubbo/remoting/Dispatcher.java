@@ -25,6 +25,13 @@ import org.apache.dubbo.remoting.transport.dispatcher.all.AllDispatcher;
 /**
  * ChannelHandlerWrapper (SPI, Singleton, ThreadSafe)
  */
+/**
+ * @desc:调度器接口
+ * 1、该接口是一个可扩展接口，并且默认实现AllDispatcher，也就是所有消息都派发到线程池，包括请求，响应，连接事件，断开事件，心跳等。
+ * 2、用了Adaptive注解，也就是按照URL中配置来加载实现类，后面两个参数是为了兼容老版本，如果这是三个key对应的值都为空，就选择AllDispatcher来实现。
+ * @author: zhaoyibing
+ * @time: 2019年5月18日 下午5:08:58
+ */
 @SPI(AllDispatcher.NAME)
 public interface Dispatcher {
 
@@ -34,6 +41,11 @@ public interface Dispatcher {
      * @param handler
      * @param url
      * @return channel handler
+     */
+    /**
+     * @desc:线程池的调度方法
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午5:09:14
      */
     @Adaptive({Constants.DISPATCHER_KEY, "dispather", "channel.handler"})
     // The last two parameters are reserved for compatibility with the old configuration

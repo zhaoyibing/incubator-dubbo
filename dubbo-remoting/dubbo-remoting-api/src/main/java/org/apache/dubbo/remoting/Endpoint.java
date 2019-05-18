@@ -35,6 +35,11 @@ public interface Endpoint {
      *
      * @return url
      */
+    /**
+     * @desc:获得该端的url
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:36:32
+     */
     URL getUrl();
 
     /**
@@ -42,12 +47,22 @@ public interface Endpoint {
      *
      * @return channel handler
      */
+    /**
+     * @desc:获得该端的通道处理器
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:37:04
+     */
     ChannelHandler getChannelHandler();
 
     /**
      * get local address.
      *
      * @return local address.
+     */
+    /**
+     * @desc:获得该端的本地地址
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:37:24
      */
     InetSocketAddress getLocalAddress();
 
@@ -57,6 +72,11 @@ public interface Endpoint {
      * @param message
      * @throws RemotingException
      */
+    /**
+     * @desc:发送消息
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:37:48
+     */
     void send(Object message) throws RemotingException;
 
     /**
@@ -65,24 +85,50 @@ public interface Endpoint {
      * @param message
      * @param sent    already sent to socket?
      */
+    /**
+     * @desc:
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:37:57
+     * @see org.apache.dubbo.remoting.transport.netty4.NettyChannel
+     */
     void send(Object message, boolean sent) throws RemotingException;
 
     /**
      * close the channel.
+     */
+    /**
+     * @desc:关闭
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:40:40
      */
     void close();
 
     /**
      * Graceful close the channel.
      */
+    /**
+     * @desc:优雅的关闭，加入了等待时间
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:40:56
+     */
     void close(int timeout);
 
+    /**
+     * @desc:开始关闭
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:41:27
+     */
     void startClose();
 
     /**
      * is closed.
      *
      * @return closed
+     */
+    /**
+     * @desc:判断是否已关闭
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:41:34
      */
     boolean isClosed();
 

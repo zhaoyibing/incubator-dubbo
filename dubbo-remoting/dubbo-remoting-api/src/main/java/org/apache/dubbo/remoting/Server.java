@@ -28,12 +28,22 @@ import java.util.Collection;
  *
  * @see org.apache.dubbo.remoting.Transporter#bind(org.apache.dubbo.common.URL, ChannelHandler)
  */
+/**
+ * @desc:服务端接口，继承Endpoint是因为服务端也是一个点
+ * @author: zhaoyibing
+ * @time: 2019年5月18日 下午4:55:23
+ */
 public interface Server extends Endpoint, Resetable, IdleSensible {
 
     /**
      * is bound.
      *
      * @return bound
+     */
+    /**
+     * @desc:判断是否绑定到本地端口，也就是该服务是否启动成功，能够连接、接收消息，提供服务
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:56:38
      */
     boolean isBound();
 
@@ -42,6 +52,11 @@ public interface Server extends Endpoint, Resetable, IdleSensible {
      *
      * @return channels
      */
+    /**
+     * @desc:获得连接该服务器的通道，也就是客户端，channel和client一一对应
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:57:34
+     */
     Collection<Channel> getChannels();
 
     /**
@@ -49,6 +64,11 @@ public interface Server extends Endpoint, Resetable, IdleSensible {
      *
      * @param remoteAddress
      * @return channel
+     */
+    /**
+     * @desc:通过远程地址获取通道
+     * @author: zhaoyibing
+     * @time: 2019年5月18日 下午4:58:11
      */
     Channel getChannel(InetSocketAddress remoteAddress);
 
