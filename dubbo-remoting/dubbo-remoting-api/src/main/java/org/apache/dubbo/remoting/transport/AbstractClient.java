@@ -39,11 +39,19 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * AbstractClient
  */
+/**
+ *	@desc:
+ * 	@author：zhaoyibing
+ * 	@time：2019年5月19日 下午8:56:08
+ */
 public abstract class AbstractClient extends AbstractEndpoint implements Client {
 
+    // 客户端线程名称
     protected static final String CLIENT_THREAD_POOL_NAME = "DubboClientHandler";
     private static final Logger logger = LoggerFactory.getLogger(AbstractClient.class);
+    // 连接锁
     private final Lock connectLock = new ReentrantLock();
+    // 发送消息时，如断开，是否重连
     private final boolean needReconnect;
     protected volatile ExecutorService executor;
 

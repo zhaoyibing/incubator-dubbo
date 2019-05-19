@@ -31,5 +31,10 @@ public class Application {
         DemoService demoService = context.getBean("demoService", DemoService.class);
         String hello = demoService.sayHello("world");
         System.out.println("result: " + hello);
+        try {
+			Thread.sleep(1000*60*2);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
     }
 }
