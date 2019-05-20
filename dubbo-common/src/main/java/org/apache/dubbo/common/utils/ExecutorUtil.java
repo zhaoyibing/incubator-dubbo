@@ -132,6 +132,11 @@ public class ExecutorUtil {
      *
      * @return new url with updated thread name
      */
+    /**
+     * @desc:设置线程名称
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午2:33:30
+     */
     public static URL setThreadName(URL url, String defaultName) {
         String name = url.getParameter(Constants.THREAD_NAME_KEY, defaultName);
         name = name + "-" + url.getAddress();

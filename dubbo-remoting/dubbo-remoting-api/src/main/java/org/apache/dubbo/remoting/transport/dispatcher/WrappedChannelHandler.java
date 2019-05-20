@@ -32,6 +32,11 @@ import org.apache.dubbo.remoting.transport.ChannelHandlerDelegate;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * @desc:
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午2:54:40
+ */
 public class WrappedChannelHandler implements ChannelHandlerDelegate {
 
     protected static final Logger logger = LoggerFactory.getLogger(WrappedChannelHandler.class);
@@ -44,16 +49,25 @@ public class WrappedChannelHandler implements ChannelHandlerDelegate {
 
     protected final URL url;
 
+    /**
+     * @desc:构造方法除了属性的填充以外，线程池是基于dubbo 的SPI Adaptive机制创建的，
+     * 	在dataStore中把线程池加进去， 该线程池就是AbstractClient 或 AbstractServer 从 DataStore 获得的线程池。
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午2:56:32
+     */
     public WrappedChannelHandler(ChannelHandler handler, URL url) {
         this.handler = handler;
         this.url = url;
         executor = (ExecutorService) ExtensionLoader.getExtensionLoader(ThreadPool.class).getAdaptiveExtension().getExecutor(url);
 
+        // 设置组件的key
         String componentKey = Constants.EXECUTOR_SERVICE_COMPONENT_KEY;
         if (Constants.CONSUMER_SIDE.equalsIgnoreCase(url.getParameter(Constants.SIDE_KEY))) {
             componentKey = Constants.CONSUMER_SIDE;
         }
+        // 获得dataStore实例
         DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
+        // 把线程池放到dataStore中缓存
         dataStore.put(componentKey, Integer.toString(url.getPort()), executor);
     }
 
@@ -109,9 +123,16 @@ public class WrappedChannelHandler implements ChannelHandlerDelegate {
         return url;
     }
 
+    /**
+     * @desc:该方法是获得线程池的实例，不过该类里面有两个线程池，还加入了一个共享线程池，共享线程池优先级较低。
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午2:57:51
+     */
     public ExecutorService getExecutorService() {
+    	// 首先返回的不是共享线程池，是该类的线程池
         ExecutorService cexecutor = executor;
         if (cexecutor == null || cexecutor.isShutdown()) {
+        	// 如果该类的线程池关闭或者为空，则返回的是共享线程池
             cexecutor = SHARED_EXECUTOR;
         }
         return cexecutor;

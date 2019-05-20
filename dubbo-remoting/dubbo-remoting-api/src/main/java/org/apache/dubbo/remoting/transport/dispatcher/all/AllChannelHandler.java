@@ -30,6 +30,11 @@ import org.apache.dubbo.remoting.transport.dispatcher.WrappedChannelHandler;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
+/**
+ * @desc:该类也继承了WrappedChannelHandler，也是为了增强功能，处理的是连接、断开连接、捕获异常以及接收到的所有消息都分发到线程池。
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午3:10:41
+ */
 public class AllChannelHandler extends WrappedChannelHandler {
 
     public AllChannelHandler(ChannelHandler handler, URL url) {

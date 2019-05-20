@@ -27,6 +27,11 @@ import org.apache.dubbo.remoting.transport.dispatcher.WrappedChannelHandler;
 
 import java.util.concurrent.ExecutorService;
 
+/**
+ * @desc:该类也是继承了WrappedChannelHandler，是WrappedChannelHandler的最后一个子类，也是增强功能，不过该类只是处理了所有的消息分发到线程池。
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午3:30:52
+ */
 public class MessageOnlyChannelHandler extends WrappedChannelHandler {
 
     public MessageOnlyChannelHandler(ChannelHandler handler, URL url) {

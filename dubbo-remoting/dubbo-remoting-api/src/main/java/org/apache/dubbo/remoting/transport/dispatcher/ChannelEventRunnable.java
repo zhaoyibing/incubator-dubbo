@@ -21,6 +21,11 @@ import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.remoting.Channel;
 import org.apache.dubbo.remoting.ChannelHandler;
 
+/**
+ * @desc:提交到线程池进行异步执行的Runnable实现
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午3:38:17
+ */
 public class ChannelEventRunnable implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(ChannelEventRunnable.class);
 

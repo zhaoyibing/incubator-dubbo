@@ -36,9 +36,18 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @desc:该类也是继承了WrappedChannelHandler，增强功能，该类是把连接、取消连接以及接收到的消息都分发到线程池，
+ * 		但是不同的是，该类自己创建了一个跟连接相关的线程池，把连接操作和断开连接操分发到该线程池，
+ * 		而接收到的消息则分发到WrappedChannelHandler的线程池中。
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午3:23:52
+ */
 public class ConnectionOrderedChannelHandler extends WrappedChannelHandler {
 
+    // 连接线程池
     protected final ThreadPoolExecutor connectionExecutor;
+    // 连接队列大小限制
     private final int queuewarninglimit;
 
     public ConnectionOrderedChannelHandler(ChannelHandler handler, URL url) {
@@ -105,6 +114,11 @@ public class ConnectionOrderedChannelHandler extends WrappedChannelHandler {
         }
     }
 
+    /**
+     * @desc:核对工作队列长度
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午3:27:54
+     */
     private void checkQueueLength() {
         if (connectionExecutor.getQueue().size() > queuewarninglimit) {
             logger.warn(new IllegalThreadStateException("connectionordered channel handler `queue size: " + connectionExecutor.getQueue().size() + " exceed the warning limit number :" + queuewarninglimit));

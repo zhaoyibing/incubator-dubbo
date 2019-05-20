@@ -26,6 +26,11 @@ import java.net.InetSocketAddress;
 /**
  * ChannelDelegate
  */
+/**
+ * @desc:通道的包装代理
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午2:53:02
+ */
 public class ChannelDelegate implements Channel {
 
     private transient Channel channel;

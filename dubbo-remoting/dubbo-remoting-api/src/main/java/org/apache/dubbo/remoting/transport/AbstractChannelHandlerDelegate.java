@@ -21,6 +21,12 @@ import org.apache.dubbo.remoting.Channel;
 import org.apache.dubbo.remoting.ChannelHandler;
 import org.apache.dubbo.remoting.RemotingException;
 
+/**
+ * @desc:该类实现了ChannelHandlerDelegate接口，并且有一个属性是ChannelHandler，
+ * 上述已经说到这是装饰模式中的装饰角色，其中的所有实现方法都直接调用被装饰的handler属性的方法。
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午2:44:21
+ */
 public abstract class AbstractChannelHandlerDelegate implements ChannelHandlerDelegate {
 
     protected ChannelHandler handler;

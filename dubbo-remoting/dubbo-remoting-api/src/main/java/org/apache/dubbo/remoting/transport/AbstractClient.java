@@ -53,14 +53,23 @@ public abstract class AbstractClient extends AbstractEndpoint implements Client 
     private final Lock connectLock = new ReentrantLock();
     // 发送消息时，如断开，是否重连
     private final boolean needReconnect;
+    
+    // 线程池
     protected volatile ExecutorService executor;
 
+    /**
+     * @desc:该构造函数中做了一些属性值的设置，并且做了打开客户端和连接服务器的操作
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午1:07:07
+     */
     public AbstractClient(URL url, ChannelHandler handler) throws RemotingException {
         super(url, handler);
 
+        // 从url中获得是否重连的配置，默认为false
         needReconnect = url.getParameter(Constants.SEND_RECONNECT_KEY, false);
 
         try {
+        	// 打开客户端
             doOpen();
         } catch (Throwable t) {
             close();
@@ -70,6 +79,7 @@ public abstract class AbstractClient extends AbstractEndpoint implements Client 
         }
         try {
             // connect.
+        	// 连接服务器
             connect();
             if (logger.isInfoEnabled()) {
                 logger.info("Start " + getClass().getSimpleName() + " " + NetUtils.getLocalAddress() + " connect to the server " + getRemoteAddress());
@@ -89,15 +99,24 @@ public abstract class AbstractClient extends AbstractEndpoint implements Client 
                             + " connect to the server " + getRemoteAddress() + ", cause: " + t.getMessage(), t);
         }
 
+        // 从缓存中获得线程池
         executor = (ExecutorService) ExtensionLoader.getExtensionLoader(DataStore.class)
                 .getDefaultExtension().get(Constants.CONSUMER_SIDE, Integer.toString(url.getPort()));
         ExtensionLoader.getExtensionLoader(DataStore.class)
                 .getDefaultExtension().remove(Constants.CONSUMER_SIDE, Integer.toString(url.getPort()));
     }
 
+    /**
+     * @desc:该方法是包装通道处理器，设置使用的线程池类型是可缓存线程池。
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午1:05:53
+     */
     protected static ChannelHandler wrapChannelHandler(URL url, ChannelHandler handler) {
+    	// 加入线程名称
         url = ExecutorUtil.setThreadName(url, CLIENT_THREAD_POOL_NAME);
+        // 设置使用的线程池类型
         url = url.addParameterIfAbsent(Constants.THREADPOOL_KEY, Constants.DEFAULT_CLIENT_THREADPOOL);
+        // 包装
         return ChannelHandlers.wrap(handler, url);
     }
 
@@ -240,6 +259,11 @@ public abstract class AbstractClient extends AbstractEndpoint implements Client 
         }
     }
 
+    /**
+     * @desc:客户端的重连
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午2:40:53
+     */
     @Override
     public void reconnect() throws RemotingException {
         if (!isConnected()) {
@@ -301,12 +325,22 @@ public abstract class AbstractClient extends AbstractEndpoint implements Client 
      *
      * @throws Throwable
      */
+    /**
+     * @desc:打开客户端
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午1:03:15
+     */
     protected abstract void doOpen() throws Throwable;
 
     /**
      * Close client.
      *
      * @throws Throwable
+     */
+    /**
+     * @desc:关闭客户端
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午1:03:02
      */
     protected abstract void doClose() throws Throwable;
 
@@ -315,6 +349,11 @@ public abstract class AbstractClient extends AbstractEndpoint implements Client 
      *
      * @throws Throwable
      */
+    /**
+     * @desc:连接客户端
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午1:02:48
+     */
     protected abstract void doConnect() throws Throwable;
 
     /**
@@ -322,12 +361,22 @@ public abstract class AbstractClient extends AbstractEndpoint implements Client 
      *
      * @throws Throwable
      */
+    /**
+     * @desc:断开客户端
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午1:03:36
+     */
     protected abstract void doDisConnect() throws Throwable;
 
     /**
      * Get the connected channel.
      *
      * @return channel
+     */
+    /**
+     * @desc:获得通道
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午1:03:48
      */
     protected abstract Channel getChannel();
 }
