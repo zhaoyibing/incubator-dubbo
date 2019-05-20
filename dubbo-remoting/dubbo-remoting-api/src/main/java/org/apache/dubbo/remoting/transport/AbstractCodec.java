@@ -31,15 +31,26 @@ import java.net.InetSocketAddress;
 /**
  * AbstractCodec
  */
+/**
+ * @desc:
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午3:39:03
+ */
 public abstract class AbstractCodec implements Codec2 {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractCodec.class);
 
+    /**
+     * @desc:校验消息长度与允许长度
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午3:40:37
+     */
     protected static void checkPayload(Channel channel, long size) throws IOException {
         int payload = Constants.DEFAULT_PAYLOAD;
         if (channel != null && channel.getUrl() != null) {
             payload = channel.getUrl().getParameter(Constants.PAYLOAD_KEY, Constants.DEFAULT_PAYLOAD);
         }
+        // 如果消息长度过长，则报错
         if (payload > 0 && size > payload) {
             ExceedPayloadLimitException e = new ExceedPayloadLimitException("Data length too large: " + size + ", max payload: " + payload + ", channel: " + channel);
             logger.error(e);
@@ -47,10 +58,20 @@ public abstract class AbstractCodec implements Codec2 {
         }
     }
 
+    /**
+     * @desc:获得序列化对象
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午3:41:22
+     */
     protected Serialization getSerialization(Channel channel) {
         return CodecSupport.getSerialization(channel.getUrl());
     }
 
+    /**
+     * @desc:该方法是判断是否为客户端侧的通道。
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午3:41:36
+     */
     protected boolean isClientSide(Channel channel) {
         String side = (String) channel.getAttribute(Constants.SIDE_KEY);
         if ("client".equals(side)) {
@@ -60,6 +81,7 @@ public abstract class AbstractCodec implements Codec2 {
         } else {
             InetSocketAddress address = channel.getRemoteAddress();
             URL url = channel.getUrl();
+            // 判断url的主机地址是否和远程地址一样，如果是，则判断为client，如果不是，则判断为server
             boolean client = url.getPort() == address.getPort()
                     && NetUtils.filterLocalHost(url.getIp()).equals(
                     NetUtils.filterLocalHost(address.getAddress()
