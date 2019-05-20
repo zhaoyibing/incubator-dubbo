@@ -23,6 +23,11 @@ import org.apache.dubbo.remoting.exchange.ResponseFuture;
 /**
  * SimpleFuture
  */
+/**
+ * @desc:该类实现了ResponseFuture，目前没有用到，很简单的实现
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午5:59:47
+ */
 public class SimpleFuture implements ResponseFuture {
 
     private final Object value;

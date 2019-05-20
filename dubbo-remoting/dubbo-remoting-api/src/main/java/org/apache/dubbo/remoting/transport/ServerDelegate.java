@@ -30,6 +30,11 @@ import java.util.Collection;
  *
  *
  */
+/**
+ * @desc:
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午4:09:42
+ */
 public class ServerDelegate implements Server {
 
     private transient Server server;

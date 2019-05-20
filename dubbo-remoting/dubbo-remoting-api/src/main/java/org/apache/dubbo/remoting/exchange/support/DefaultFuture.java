@@ -44,12 +44,19 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * DefaultFuture.
  */
+/**
+ * @desc:该类实现了ResponseFuture接口，其中封装了处理响应的逻辑。
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午5:33:01
+ */
 public class DefaultFuture implements ResponseFuture {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultFuture.class);
 
+    // 通道集合
     private static final Map<Long, Channel> CHANNELS = new ConcurrentHashMap<>();
 
+    // Future集合，key为请求编号
     private static final Map<Long, DefaultFuture> FUTURES = new ConcurrentHashMap<>();
 
     public static final Timer TIME_OUT_TIMER = new HashedWheelTimer(
@@ -69,6 +76,11 @@ public class DefaultFuture implements ResponseFuture {
     private volatile Response response;
     private volatile ResponseCallback callback;
 
+    /**
+     * @desc:每一个DefaultFuture实例都跟每一个请求一一对应，被存入到集合中管理起来
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:36:31
+     */
     private DefaultFuture(Channel channel, Request request, int timeout) {
         this.channel = channel;
         this.request = request;
@@ -125,6 +137,11 @@ public class DefaultFuture implements ResponseFuture {
      *
      * @param channel channel to close
      */
+    /**
+     * @desc:关闭不活跃的通道，并且返回请求未完成。也就是关闭指定channel的请求，返回的是请求未完成。
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:36:47
+     */
     public static void closeChannel(Channel channel) {
         for (Map.Entry<Long, Channel> entry : CHANNELS.entrySet()) {
             if (channel.equals(entry.getValue())) {
@@ -142,6 +159,11 @@ public class DefaultFuture implements ResponseFuture {
         }
     }
 
+    /**
+     * @desc:接收响应，也就是某个请求得到了响应，那么代表这次请求任务完成，所有需要把future从集合中移除。
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:42:40
+     */
     public static void received(Channel channel, Response response) {
         try {
             DefaultFuture future = FUTURES.remove(response.getId());
@@ -164,6 +186,11 @@ public class DefaultFuture implements ResponseFuture {
         return get(timeout);
     }
 
+    /**
+     * @desc:获取响应。获得该future对应的请求对应的响应结果，其实future、请求、响应都是一一对应的。其中如果还没得到响应，则会线程阻塞等待，等到有响应结果或者超时，才返回。
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:55:07
+     */
     @Override
     public Object get(int timeout) throws RemotingException {
         if (timeout <= 0) {
@@ -173,8 +200,11 @@ public class DefaultFuture implements ResponseFuture {
             long start = System.currentTimeMillis();
             lock.lock();
             try {
+            	// 轮询 等待请求是否完成
                 while (!isDone()) {
+                	// 线程阻塞等待
                     done.await(timeout, TimeUnit.MILLISECONDS);
+                    // 如果请求完成或者超时，则结束
                     if (isDone() || System.currentTimeMillis() - start > timeout) {
                         break;
                     }
@@ -191,6 +221,11 @@ public class DefaultFuture implements ResponseFuture {
         return returnFromResponse();
     }
 
+    /**
+     * @desc:该方法是取消一个请求，可以直接关闭一个请求，也就是值创建一个响应来回应该请求，
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:56:56
+     */
     public void cancel() {
         Response errorResult = new Response(id);
         errorResult.setErrorMessage("request future has been canceled.");
@@ -199,6 +234,11 @@ public class DefaultFuture implements ResponseFuture {
         CHANNELS.remove(id);
     }
 
+    /**
+     * @desc:判断请求有没有完成，也就是有没有响应返回
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:48:16
+     */
     @Override
     public boolean isDone() {
         return response != null;
@@ -250,6 +290,11 @@ public class DefaultFuture implements ResponseFuture {
         }
     }
 
+    /**
+     * @desc:请求完成后的回调
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:45:49
+     */
     private void invokeCallback(ResponseCallback c) {
         ResponseCallback callbackCopy = c;
         if (callbackCopy == null) {
@@ -283,6 +328,11 @@ public class DefaultFuture implements ResponseFuture {
         }
     }
 
+    /**
+     * @desc:这代码跟invokeCallback方法中差不多，都是把响应分了三种情况。
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:56:24
+     */
     private Object returnFromResponse() throws RemotingException {
         Response res = response;
         if (res == null) {
@@ -325,6 +375,11 @@ public class DefaultFuture implements ResponseFuture {
         sent = System.currentTimeMillis();
     }
 
+    /**
+     * @desc:当接收到响应后，会把等待的线程唤醒，然后执行回调来处理该响应结果
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:42:55
+     */
     private void doReceived(Response res) {
         lock.lock();
         try {

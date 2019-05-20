@@ -33,12 +33,18 @@ import java.io.OutputStream;
 /**
  * TransportCodec
  */
+/**
+ * @desc:传输编解码器，使用 Serialization 进行序列化/反序列化，直接编解码
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午3:56:43
+ */
 public class TransportCodec extends AbstractCodec {
 
     @Override
     public void encode(Channel channel, ChannelBuffer buffer, Object message) throws IOException {
         OutputStream output = new ChannelBufferOutputStream(buffer);
         ObjectOutput objectOutput = getSerialization(channel).serialize(channel.getUrl(), output);
+        // 写入 ObjectOutput
         encodeData(channel, objectOutput, message);
         objectOutput.flushBuffer();
         if (objectOutput instanceof Cleanable) {
@@ -46,10 +52,17 @@ public class TransportCodec extends AbstractCodec {
         }
     }
 
+    /**
+     * @desc:
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午4:00:06
+     */
     @Override
     public Object decode(Channel channel, ChannelBuffer buffer) throws IOException {
+    	// 获得反序列化的 ObjectInput 对象
         InputStream input = new ChannelBufferInputStream(buffer);
         ObjectInput objectInput = getSerialization(channel).deserialize(channel.getUrl(), input);
+        // 读取 ObjectInput
         Object object = decodeData(channel, objectInput);
         if (objectInput instanceof Cleanable) {
             ((Cleanable) objectInput).cleanup();

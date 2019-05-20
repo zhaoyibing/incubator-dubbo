@@ -29,6 +29,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
 /**
  * ChannelListenerDispatcher
  */
+/**
+ * @desc:该类是通道处理器调度器，其中缓存了所有通道处理器，有一个通道处理器集合。
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午4:12:21
+ */
 public class ChannelHandlerDispatcher implements ChannelHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ChannelHandlerDispatcher.class);

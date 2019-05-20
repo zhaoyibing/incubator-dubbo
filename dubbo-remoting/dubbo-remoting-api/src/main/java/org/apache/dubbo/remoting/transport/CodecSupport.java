@@ -31,15 +31,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * @desc:该类是编解码工具类，提供查询 Serialization 的功能。
+ * 	该类中缓存了所有的序列化对象和序列化扩展名。可以从中拿到Serialization
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午4:15:42
+ */
 public class CodecSupport {
 
     private static final Logger logger = LoggerFactory.getLogger(CodecSupport.class);
+    
+    // 序列化对象集合 key为序列化类型编号
     private static Map<Byte, Serialization> ID_SERIALIZATION_MAP = new HashMap<Byte, Serialization>();
+    
+    // 序列化扩展名集合 key为序列化类型编号 value为序列化扩展名
     private static Map<Byte, String> ID_SERIALIZATIONNAME_MAP = new HashMap<Byte, String>();
 
     static {
+    	// 利用dubbo 的SPI机制获得序列化扩展名
         Set<String> supportedExtensions = ExtensionLoader.getExtensionLoader(Serialization.class).getSupportedExtensions();
         for (String name : supportedExtensions) {
+        	// 获得相应扩展名的序列化实现
             Serialization serialization = ExtensionLoader.getExtensionLoader(Serialization.class).getExtension(name);
             byte idByte = serialization.getContentTypeId();
             if (ID_SERIALIZATION_MAP.containsKey(idByte)) {

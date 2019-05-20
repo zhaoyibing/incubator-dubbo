@@ -27,6 +27,11 @@ import org.apache.dubbo.remoting.buffer.ChannelBuffer;
 
 import java.io.IOException;
 
+/**
+ * @desc:该类是Codec 的适配器，用到了适配器模式，把Codec适配成Codec2。将Codec的编码和解码方法都适配成Codec2。
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午4:01:01
+ */
 public class CodecAdapter implements Codec2 {
 
     private Codec codec;

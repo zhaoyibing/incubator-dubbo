@@ -23,6 +23,12 @@ import org.apache.dubbo.remoting.RemotingException;
 /**
  * ChannelHandlerAdapter.
  */
+/**
+ * @desc:该类实现了ChannelHandler接口，是通道处理器适配类，该类中所有实现方法都是空的，
+ * 		所有想实现ChannelHandler接口的类可以直接继承该类，选择需要实现的方法进行实现，不需要实现ChannelHandler接口中所有方法。
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午4:10:26
+ */
 public class ChannelHandlerAdapter implements ChannelHandler {
 
     @Override

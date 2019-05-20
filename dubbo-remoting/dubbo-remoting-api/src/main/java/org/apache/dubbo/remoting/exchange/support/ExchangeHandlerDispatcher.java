@@ -30,12 +30,20 @@ import java.util.concurrent.CompletableFuture;
 /**
  * ExchangeHandlerDispatcher
  */
+/**
+ * @desc:
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午6:06:57
+ */
 public class ExchangeHandlerDispatcher implements ExchangeHandler {
 
+    //  回复者调度器
     private final ReplierDispatcher replierDispatcher;
 
+    // 通道处理器调度器
     private final ChannelHandlerDispatcher handlerDispatcher;
 
+    // Telnet 命令处理器
     private final TelnetHandler telnetHandler;
 
     public ExchangeHandlerDispatcher() {

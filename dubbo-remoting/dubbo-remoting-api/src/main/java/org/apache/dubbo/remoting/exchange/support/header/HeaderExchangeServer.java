@@ -45,6 +45,11 @@ import static java.util.Collections.unmodifiableCollection;
 /**
  * ExchangeServerImpl
  */
+/**
+ * @desc:HeaderExchangeServer是Server的装饰器
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午6:10:22
+ */
 public class HeaderExchangeServer implements ExchangeServer {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());

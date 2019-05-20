@@ -26,6 +26,11 @@ import java.net.InetSocketAddress;
 /**
  * ClientDelegate
  */
+/**
+ * @desc:
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午4:09:51
+ */
 public class ClientDelegate implements Client {
 
     private transient Client client;

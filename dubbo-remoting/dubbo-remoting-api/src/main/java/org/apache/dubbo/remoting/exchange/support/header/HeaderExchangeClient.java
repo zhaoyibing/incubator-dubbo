@@ -39,16 +39,34 @@ import static org.apache.dubbo.common.utils.UrlUtils.getIdleTimeout;
 /**
  * DefaultMessageClient
  */
+/**
+ * @desc:该类实现了ExchangeClient接口，是基于协议头的信息交互客户端类，
+ * 		同样它是Client、Channel的适配器。在该类的源码中可以看到所有的实现方法都是调用了client和channel属性的方法。
+ * 		
+ * 		该类主要的作用就是增加了心跳功能，为什么要增加心跳功能呢，对于长连接，一些拔网线等物理层的断开，会导致TCP的FIN消息来不及发送，对方收不到断开事件，那么就需要用到发送心跳包来检测连接是否断开。
+ * 		consumer和provider断开，处理措施不一样，会分别做出重连和关闭通道的操作。
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午5:08:45
+ */
 public class HeaderExchangeClient implements ExchangeClient {
 
     private final Client client;
     private final ExchangeChannel channel;
 
+    // 心跳定时器
     private static final HashedWheelTimer IDLE_CHECK_TIMER = new HashedWheelTimer(
             new NamedThreadFactory("dubbo-client-idleCheck", true), 1, TimeUnit.SECONDS, Constants.TICKS_PER_WHEEL);
+    
+    // 心跳定时器
     private HeartbeatTimerTask heartBeatTimerTask;
+    // 重连定时器
     private ReconnectTimerTask reconnectTimerTask;
 
+    /**
+     * @desc:startTimer 是否启动2个定时器
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:15:25
+     */
     public HeaderExchangeClient(Client client, boolean startTimer) {
         Assert.notNull(client, "Client can't be null");
         this.client = client;
@@ -172,6 +190,11 @@ public class HeaderExchangeClient implements ExchangeClient {
         return channel.hasAttribute(key);
     }
 
+    /**
+     * @desc:心跳监测
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:20:48
+     */
     private void startHeartBeatTask(URL url) {
         if (!client.canHandleIdle()) {
             AbstractTimerTask.ChannelProvider cp = () -> Collections.singletonList(HeaderExchangeClient.this);
@@ -182,6 +205,11 @@ public class HeaderExchangeClient implements ExchangeClient {
         }
     }
 
+    /**
+     * @desc:开启重连任务
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:15:59
+     */
     private void startReconnectTask(URL url) {
         if (shouldReconnect(url)) {
             AbstractTimerTask.ChannelProvider cp = () -> Collections.singletonList(HeaderExchangeClient.this);
@@ -213,6 +241,11 @@ public class HeaderExchangeClient implements ExchangeClient {
         }
     }
 
+    /**
+     * @desc:根据url中的reconnect 判断是否需要重连定时器
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:16:25
+     */
     private boolean shouldReconnect(URL url) {
         return url.getParameter(Constants.RECONNECT_KEY, true);
     }

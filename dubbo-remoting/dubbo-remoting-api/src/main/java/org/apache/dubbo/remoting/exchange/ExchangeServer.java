@@ -24,6 +24,11 @@ import java.util.Collection;
 /**
  * ExchangeServer. (API/SPI, Prototype, ThreadSafe)
  */
+/**
+ * @desc:
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午6:09:49
+ */
 public interface ExchangeServer extends Server {
 
     /**

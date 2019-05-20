@@ -25,6 +25,11 @@ import org.apache.dubbo.remoting.Client;
 /**
  * ReconnectTimerTask
  */
+/**
+ * @desc:重连任务
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午5:28:44
+ */
 public class ReconnectTimerTask extends AbstractTimerTask {
 
     private static final Logger logger = LoggerFactory.getLogger(ReconnectTimerTask.class);

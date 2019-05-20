@@ -26,6 +26,11 @@ import java.util.concurrent.CompletableFuture;
 /**
  * ExchangeHandlerAdapter
  */
+/**
+ * @desc:该类继承了TelnetHandlerAdapter，实现了ExchangeHandler，是信息交换处理器的适配器类
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午6:07:51
+ */
 public abstract class ExchangeHandlerAdapter extends TelnetHandlerAdapter implements ExchangeHandler {
 
     @Override

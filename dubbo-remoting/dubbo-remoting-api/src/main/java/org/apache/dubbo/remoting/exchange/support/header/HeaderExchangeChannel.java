@@ -36,16 +36,29 @@ import java.net.InetSocketAddress;
 /**
  * ExchangeReceiver
  */
+/**
+ * @desc:该类实现了ExchangeChannel，是基于协议头的信息交换通道。
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午4:50:30
+ */
 final class HeaderExchangeChannel implements ExchangeChannel {
 
     private static final Logger logger = LoggerFactory.getLogger(HeaderExchangeChannel.class);
 
+    // 通道的key值
     private static final String CHANNEL_KEY = HeaderExchangeChannel.class.getName() + ".CHANNEL";
 
+    // 通道
     private final Channel channel;
 
+    // 是否关闭
     private volatile boolean closed = false;
 
+    /**
+     * @desc:
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午4:52:00
+     */
     HeaderExchangeChannel(Channel channel) {
         if (channel == null) {
             throw new IllegalArgumentException("channel == null");
@@ -53,14 +66,22 @@ final class HeaderExchangeChannel implements ExchangeChannel {
         this.channel = channel;
     }
 
+    /**
+     * @desc:该静态方法做了HeaderExchangeChannel的创建和销毁，并且生命周期随channel销毁而销毁
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午4:54:39
+     */
     static HeaderExchangeChannel getOrAddChannel(Channel ch) {
         if (ch == null) {
             return null;
         }
+        // 获得通道中的HeaderExchangeChannel
         HeaderExchangeChannel ret = (HeaderExchangeChannel) ch.getAttribute(CHANNEL_KEY);
         if (ret == null) {
+        	// 创建一个HeaderExchangeChannel实例
             ret = new HeaderExchangeChannel(ch);
             if (ch.isConnected()) {
+            	// 加入属性值
                 ch.setAttribute(CHANNEL_KEY, ret);
             }
         }
@@ -69,6 +90,7 @@ final class HeaderExchangeChannel implements ExchangeChannel {
 
     static void removeChannelIfDisconnected(Channel ch) {
         if (ch != null && !ch.isConnected()) {
+        	// 移除属性值
             ch.removeAttribute(CHANNEL_KEY);
         }
     }
@@ -78,8 +100,14 @@ final class HeaderExchangeChannel implements ExchangeChannel {
         send(message, false);
     }
 
+    /**
+     * @desc:该方法是在channel的send方法上加上了request和response模型，最后再调用channel.send，起到了装饰器的作用
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午4:58:08
+     */
     @Override
     public void send(Object message, boolean sent) throws RemotingException {
+    	// 如果通道关闭，抛出异常
         if (closed) {
             throw new RemotingException(this.getLocalAddress(), null, "Failed to send message " + message + ", cause: The channel " + this + " is closed!");
         }
@@ -101,16 +129,26 @@ final class HeaderExchangeChannel implements ExchangeChannel {
         return request(request, channel.getUrl().getPositiveParameter(Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT));
     }
 
+    /**
+     * @desc:该方法是请求方法，用Request模型把请求内容装饰起来，然后发送一个Request类型的消息，并且返回DefaultFuture实例
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:04:31
+     */
     @Override
     public ResponseFuture request(Object request, int timeout) throws RemotingException {
+    	// 如果通道关闭，则抛出异常
         if (closed) {
             throw new RemotingException(this.getLocalAddress(), null, "Failed to send request " + request + ", cause: The channel " + this + " is closed!");
         }
-        // create request.
+        // create request.创建请求
         Request req = new Request();
+        // 设置版本号
         req.setVersion(Version.getProtocolVersion());
+        // 设置需要响应
         req.setTwoWay(true);
+        // 把请求数据传入
         req.setData(request);
+        // 创建DefaultFuture对象，可以从future中主动获得请求对应的响应信息
         DefaultFuture future = DefaultFuture.newFuture(channel, req, timeout);
         try {
             channel.send(req);
@@ -136,6 +174,11 @@ final class HeaderExchangeChannel implements ExchangeChannel {
     }
 
     // graceful close
+    /**
+     * @desc:优雅的关闭
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午5:05:11
+     */
     @Override
     public void close(int timeout) {
         if (closed) {

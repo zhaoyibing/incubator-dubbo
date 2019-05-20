@@ -22,6 +22,11 @@ import org.apache.dubbo.remoting.RemotingException;
 /**
  * ExchangeChannel. (API/SPI, Prototype, ThreadSafe)
  */
+/**
+ * @desc:该接口是信息交换通道接口，有四个方法，前两个是发送请求消息，区别就是第二个发送请求有超时的参数，
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午4:46:55
+ */
 public interface ExchangeChannel extends Channel {
 
     /**
@@ -47,6 +52,11 @@ public interface ExchangeChannel extends Channel {
      * get message handler.
      *
      * @return message handler
+     */
+    /**
+     * @desc:返回一个信息交换处理器
+     * @author: zhaoyibing
+     * @time: 2019年5月20日 下午4:47:38
      */
     ExchangeHandler getExchangeHandler();
 

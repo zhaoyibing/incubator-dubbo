@@ -26,6 +26,11 @@ import org.apache.dubbo.remoting.exchange.Request;
 /**
  * HeartbeatTimerTask
  */
+/**
+ * @desc:心跳监测任务
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午5:28:54
+ */
 public class HeartbeatTimerTask extends AbstractTimerTask {
 
     private static final Logger logger = LoggerFactory.getLogger(HeartbeatTimerTask.class);

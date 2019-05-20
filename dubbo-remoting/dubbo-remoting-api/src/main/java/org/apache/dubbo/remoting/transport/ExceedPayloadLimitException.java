@@ -18,6 +18,11 @@ package org.apache.dubbo.remoting.transport;
 
 import java.io.IOException;
 
+/**
+ * @desc:该类是消息长度限制异常。
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午4:22:21
+ */
 public class ExceedPayloadLimitException extends IOException {
     private static final long serialVersionUID = -1112322085391551410L;
 

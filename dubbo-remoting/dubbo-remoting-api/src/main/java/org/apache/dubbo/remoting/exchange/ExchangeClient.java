@@ -23,6 +23,11 @@ import org.apache.dubbo.remoting.Client;
  *
  *
  */
+/**
+ * @desc:信息交换客户端接口
+ * @author: zhaoyibing
+ * @time: 2019年5月20日 下午5:07:32
+ */
 public interface ExchangeClient extends Client, ExchangeChannel {
 
 }
