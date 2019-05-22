@@ -47,6 +47,7 @@ import static java.util.Collections.unmodifiableCollection;
  */
 /**
  * @desc:HeaderExchangeServer是Server的装饰器
+ *	 consumer和provider断开，处理措施不一样，会分别做出重连和关闭通道的操作。
  * @author: zhaoyibing
  * @time: 2019年5月20日 下午6:10:22
  */

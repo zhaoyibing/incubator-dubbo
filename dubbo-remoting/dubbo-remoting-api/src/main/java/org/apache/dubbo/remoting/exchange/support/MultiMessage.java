@@ -27,6 +27,11 @@ import java.util.List;
 /**
  * @see org.apache.dubbo.remoting.transport.MultiMessageHandler
  */
+/**
+ * @desc:多消息，一个消息中包含多条消息
+ * @author: zhaoyibing
+ * @time: 2019年5月22日 下午5:19:28
+ */
 public final class MultiMessage implements Iterable {
 
     private final List messages = new ArrayList();

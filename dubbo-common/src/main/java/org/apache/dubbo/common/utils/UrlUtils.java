@@ -467,6 +467,11 @@ public class UrlUtils {
                 PROVIDERS_CATEGORY.equals(url.getParameter(CATEGORY_KEY, PROVIDERS_CATEGORY));
     }
 
+    /**
+     * @desc:获取心跳的配置，默认1分钟监测一次
+     * @author: zhaoyibing
+     * @time: 2019年5月22日 下午2:57:41
+     */
     public static int getHeartbeat(URL url) {
         return url.getParameter(Constants.HEARTBEAT_KEY, Constants.DEFAULT_HEARTBEAT);
     }

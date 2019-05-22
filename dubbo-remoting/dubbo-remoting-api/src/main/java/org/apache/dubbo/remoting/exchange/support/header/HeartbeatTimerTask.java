@@ -35,6 +35,7 @@ public class HeartbeatTimerTask extends AbstractTimerTask {
 
     private static final Logger logger = LoggerFactory.getLogger(HeartbeatTimerTask.class);
 
+    // 心跳间隔 单位：ms
     private final int heartbeat;
 
     HeartbeatTimerTask(ChannelProvider channelProvider, Long heartbeatTick, int heartbeat) {
@@ -42,13 +43,23 @@ public class HeartbeatTimerTask extends AbstractTimerTask {
         this.heartbeat = heartbeat;
     }
 
+    /**
+     * @desc:心跳监测
+     * @author: zhaoyibing
+     * @time: 2019年5月22日 下午2:35:11
+     */
     @Override
     protected void doTask(Channel channel) {
         try {
+        	// 最后读
             Long lastRead = lastRead(channel);
+            // 最后写
             Long lastWrite = lastWrite(channel);
+            // 最后读的时间不空 当前时间减去最后读的时间超过监测周期
             if ((lastRead != null && now() - lastRead > heartbeat)
+            		//或者 最后写的时间不空  当前时间减去最后写的时间超过监测周期
                     || (lastWrite != null && now() - lastWrite > heartbeat)) {
+            	// 通道发送HEARTBEAT_EVENT
                 Request req = new Request();
                 req.setVersion(Version.getProtocolVersion());
                 req.setTwoWay(true);

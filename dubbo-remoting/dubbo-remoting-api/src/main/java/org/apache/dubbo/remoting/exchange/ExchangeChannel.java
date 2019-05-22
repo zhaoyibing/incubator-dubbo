@@ -36,6 +36,13 @@ public interface ExchangeChannel extends Channel {
      * @return response future
      * @throws RemotingException
      */
+    /**
+     * @desc:2个request方法 和 Endpoint接口的2个send方法对应
+     * 		Endpoint 接口的是发送消息，Object类型
+     * 		ExchangeChannel 接口的request方法参数是Object， 实现的时候把object的参数包装成了Request类型对象
+     * @author: zhaoyibing
+     * @time: 2019年5月22日 上午9:10:09
+     */
     ResponseFuture request(Object request) throws RemotingException;
 
     /**

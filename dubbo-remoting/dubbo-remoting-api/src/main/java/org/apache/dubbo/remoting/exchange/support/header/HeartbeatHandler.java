@@ -27,6 +27,14 @@ import org.apache.dubbo.remoting.exchange.Request;
 import org.apache.dubbo.remoting.exchange.Response;
 import org.apache.dubbo.remoting.transport.AbstractChannelHandlerDelegate;
 
+/**
+ * @desc:心跳监测，向通道中添加了2个属性，READ_TIMESTAMP, WRITE_TIMESTAMP根据这2个属性和系统当前时间判定是否需要发送心跳监测
+ * 
+ * 在handler处理消息上增加了处理心跳消息的功能，做到了功能增强。
+ * 
+ * @author: zhaoyibing
+ * @time: 2019年5月22日 下午3:00:23
+ */
 public class HeartbeatHandler extends AbstractChannelHandlerDelegate {
 
     private static final Logger logger = LoggerFactory.getLogger(HeartbeatHandler.class);
@@ -39,6 +47,11 @@ public class HeartbeatHandler extends AbstractChannelHandlerDelegate {
         super(handler);
     }
 
+    /**
+     * @desc:通道连接时向通道内添加2个属性
+     * @author: zhaoyibing
+     * @time: 2019年5月22日 下午3:04:57
+     */
     @Override
     public void connected(Channel channel) throws RemotingException {
         setReadTimestamp(channel);
@@ -46,6 +59,11 @@ public class HeartbeatHandler extends AbstractChannelHandlerDelegate {
         handler.connected(channel);
     }
 
+    /**
+     * @desc:失去连接时清空2个属性
+     * @author: zhaoyibing
+     * @time: 2019年5月22日 下午3:06:48
+     */
     @Override
     public void disconnected(Channel channel) throws RemotingException {
         clearReadTimestamp(channel);
@@ -53,6 +71,11 @@ public class HeartbeatHandler extends AbstractChannelHandlerDelegate {
         handler.disconnected(channel);
     }
 
+    /**
+     * @desc:发送消息时，
+     * @author: zhaoyibing
+     * @time: 2019年5月22日 下午3:07:59
+     */
     @Override
     public void sent(Channel channel, Object message) throws RemotingException {
         setWriteTimestamp(channel);
@@ -64,6 +87,7 @@ public class HeartbeatHandler extends AbstractChannelHandlerDelegate {
         setReadTimestamp(channel);
         if (isHeartbeatRequest(message)) {
             Request req = (Request) message;
+            // 如果需要响应 two way：2条路的意思???
             if (req.isTwoWay()) {
                 Response res = new Response(req.getId(), req.getVersion());
                 res.setEvent(Response.HEARTBEAT_EVENT);
@@ -79,6 +103,7 @@ public class HeartbeatHandler extends AbstractChannelHandlerDelegate {
             }
             return;
         }
+        //心跳响应
         if (isHeartbeatResponse(message)) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Receive heartbeat response in thread " + Thread.currentThread().getName());

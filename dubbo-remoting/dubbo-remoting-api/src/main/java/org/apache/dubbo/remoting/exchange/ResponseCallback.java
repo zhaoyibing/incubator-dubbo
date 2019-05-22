@@ -19,6 +19,14 @@ package org.apache.dubbo.remoting.exchange;
 /**
  * Callback
  */
+/**
+ * @desc:返回回调
+ * 
+ * @see org.apache.dubbo.remoting.exchange.support.DefaultFuture#received(org.apache.dubbo.remoting.Channel, Response) (回调的调用处)
+ * 
+ * @author: zhaoyibing
+ * @time: 2019年5月22日 下午5:15:30
+ */
 public interface ResponseCallback {
 
     /**
@@ -26,12 +34,22 @@ public interface ResponseCallback {
      *
      * @param response
      */
+    /**
+     * @desc:完成时回调
+     * @author: zhaoyibing
+     * @time: 2019年5月22日 下午6:07:17
+     */
     void done(Object response);
 
     /**
      * caught exception.
      *
      * @param exception
+     */
+    /**
+     * @desc:抛出异常时回调此方法
+     * @author: zhaoyibing
+     * @time: 2019年5月22日 下午6:07:25
      */
     void caught(Throwable exception);
 

@@ -198,6 +198,7 @@ public class HeaderExchangeClient implements ExchangeClient {
     private void startHeartBeatTask(URL url) {
         if (!client.canHandleIdle()) {
             AbstractTimerTask.ChannelProvider cp = () -> Collections.singletonList(HeaderExchangeClient.this);
+            //心跳间隔（默认1分钟）
             int heartbeat = getHeartbeat(url);
             long heartbeatTick = calculateLeastDuration(heartbeat);
             this.heartBeatTimerTask = new HeartbeatTimerTask(cp, heartbeatTick, heartbeat);
@@ -212,6 +213,7 @@ public class HeaderExchangeClient implements ExchangeClient {
      */
     private void startReconnectTask(URL url) {
         if (shouldReconnect(url)) {
+        	// 返回一个只包含HeaderExchangeClient对象的不可变列表
             AbstractTimerTask.ChannelProvider cp = () -> Collections.singletonList(HeaderExchangeClient.this);
             int idleTimeout = getIdleTimeout(url);
             long heartbeatTimeoutTick = calculateLeastDuration(idleTimeout);

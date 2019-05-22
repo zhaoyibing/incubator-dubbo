@@ -266,6 +266,11 @@ public class DefaultFuture implements ResponseFuture {
         }
     }
 
+    /**
+     * @desc:超时扫描
+     * @author: zhaoyibing
+     * @time: 2019年5月22日 下午6:10:51
+     */
     private static class TimeoutCheckTask implements TimerTask {
 
         private DefaultFuture future;
@@ -388,6 +393,7 @@ public class DefaultFuture implements ResponseFuture {
         } finally {
             lock.unlock();
         }
+        // 执行回调
         if (callback != null) {
             invokeCallback(callback);
         }
