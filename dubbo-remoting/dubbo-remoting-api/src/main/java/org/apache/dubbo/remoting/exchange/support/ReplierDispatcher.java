@@ -25,6 +25,11 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * ReplierDispatcher
  */
+/**
+ * @desc:回复者调度器实现类
+ * @author: zhaoyibing
+ * @time: 2019年5月23日 上午11:16:05
+ */
 public class ReplierDispatcher implements Replier<Object> {
 
     private final Replier<?> defaultReplier;

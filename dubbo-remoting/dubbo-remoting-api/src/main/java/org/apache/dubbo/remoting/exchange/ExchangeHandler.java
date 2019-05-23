@@ -26,7 +26,7 @@ import java.util.concurrent.CompletableFuture;
  * ExchangeHandler. (API, Prototype, ThreadSafe)
  */
 /**
- * @desc:该接口继承了ChannelHandler, TelnetHandler接口，是信息交换处理器接口
+ * @desc:该接口是信息交换处理器接口
  * @author: zhaoyibing
  * @time: 2019年5月20日 下午6:00:34
  */

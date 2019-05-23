@@ -19,6 +19,11 @@ package org.apache.dubbo.remoting.exchange;
 /**
  * Response
  */
+/**
+ * @desc:请求后的响应
+ * @author: zhaoyibing
+ * @time: 2019年5月23日 下午1:33:18
+ */
 public class Response {
 
     public static final String HEARTBEAT_EVENT = null;

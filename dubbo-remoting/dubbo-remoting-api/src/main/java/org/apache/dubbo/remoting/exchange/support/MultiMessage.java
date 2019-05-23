@@ -25,10 +25,10 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @see org.apache.dubbo.remoting.transport.MultiMessageHandler
- */
-/**
  * @desc:多消息，一个消息中包含多条消息
+ * 
+ * @see org.apache.dubbo.remoting.transport.MultiMessageHandler
+ * 
  * @author: zhaoyibing
  * @time: 2019年5月22日 下午5:19:28
  */

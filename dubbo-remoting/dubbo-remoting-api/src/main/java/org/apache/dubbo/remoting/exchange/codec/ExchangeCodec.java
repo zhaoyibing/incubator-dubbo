@@ -47,18 +47,38 @@ import java.io.InputStream;
 public class ExchangeCodec extends TelnetCodec {
 
     // header length.
+    // 协议头长度：16字节 = 128Bits
     protected static final int HEADER_LENGTH = 16;
     // magic header.
+    //MAGIC二进制：  1101(d) 1010(a) 1011(b) 1011(b)
     protected static final short MAGIC = (short) 0xdabb;
+    
+    // MAGIC_HIGH = 1101(d) 1010(a)
+    /**
+     *   原码:  最高位为符号位 1为负数 0 为整数
+     *   	1101 1010
+     *   取反码：符号位不变，其余为取反
+     *   	1010 0101
+     *   取补码：反码+1
+     *      1010 0110 = -38
+     *  MAGIC_HIGH= -38
+     */
     protected static final byte MAGIC_HIGH = Bytes.short2bytes(MAGIC)[0];
+    
+    // MAGIC_LOW = 1011(b) 1011(b) = -69
     protected static final byte MAGIC_LOW = Bytes.short2bytes(MAGIC)[1];
     // message flag.
+    //二进制 1000 0000
     protected static final byte FLAG_REQUEST = (byte) 0x80;
+    //二进制： 0100 0000 是否需要响应的标志位
     protected static final byte FLAG_TWOWAY = (byte) 0x40;
+    //二进制： 0010 0000 是否为事件的标志位
     protected static final byte FLAG_EVENT = (byte) 0x20;
+    
+    // 二进制： 0001 1111(序列化协议相关)
     protected static final int SERIALIZATION_MASK = 0x1f;
     private static final Logger logger = LoggerFactory.getLogger(ExchangeCodec.class);
-
+    
     public Short getMagicCode() {
         return MAGIC;
     }
@@ -206,9 +226,34 @@ public class ExchangeCodec extends TelnetCodec {
         }
         return req.getData();
     }
+    
+    
+    public static void main(String[] args) {
+    	System.out.println(Integer.toBinaryString(-100));
+		System.out.println(Long.toBinaryString(-111111100000L));
+		
+		int playload = 8 * 1024 * 1024;
+		System.out.println(playload);
+	}
 
+    /**
+     * @desc:对请求进行加密
+     * @author: zhaoyibing
+     * @time: 2019年5月23日 下午2:19:51
+     */
     protected void encodeRequest(Channel channel, ChannelBuffer buffer, Request req) throws IOException {
         Serialization serialization = getSerialization(channel);
+        /**
+         * 构造消息头：
+         * 16字节 = byte[16], 1 byte = 8 bit
+         * header[0] = 1011 1011
+         * header[1] = 1101 1010
+         * header[2] = 1000 0000 或 1100 0000 1110 0000  与 serialization.getContentTypeId() 进行或操作
+         * header[3] = ?
+         * header[4] ~ header[11] request对应的id，long类型 64bit 8byte
+         * header[12] ~ header[15] 消息体的大小
+         * 
+         */
         // header.
         byte[] header = new byte[HEADER_LENGTH];
         // set magic number.
@@ -253,6 +298,21 @@ public class ExchangeCodec extends TelnetCodec {
         buffer.writerIndex(savedWriteIndex + HEADER_LENGTH + len);
     }
 
+    /**
+     * @desc:
+     * @author: zhaoyibing
+     * @time: 2019年5月23日 下午2:49:59
+     * 
+     * 16位消息头构成：
+     *   header[0] = 1011 1011
+     *   header[1] = 1101 1010
+     *   header[2] = 序列化协议与 事件的或 结果
+     *   header[3] = response.status
+     *   header[4] ~ header[11] response.id
+     *   header[12]~ header[15] 返回结果的长度
+     * 
+     * 
+     */
     protected void encodeResponse(Channel channel, ChannelBuffer buffer, Response res) throws IOException {
         int savedWriteIndex = buffer.writerIndex();
         try {

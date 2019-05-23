@@ -29,6 +29,11 @@ import org.apache.dubbo.remoting.exchange.support.header.HeaderExchanger;
  * <a href="http://en.wikipedia.org/wiki/Message_Exchange_Pattern">Message Exchange Pattern</a>
  * <a href="http://en.wikipedia.org/wiki/Request-response">Request-Response</a>
  */
+/**
+ * @desc:数据交换者接口，该接口是一个可扩展接口默认实现的是HeaderExchanger类
+ * @author: zhaoyibing
+ * @time: 2019年5月23日 上午11:06:47
+ */
 @SPI(HeaderExchanger.NAME)
 public interface Exchanger {
 
@@ -39,6 +44,11 @@ public interface Exchanger {
      * @param handler
      * @return message server
      */
+    /**
+     * @desc:绑定一个服务器  返回 server
+     * @author: zhaoyibing
+     * @time: 2019年5月23日 上午11:04:23
+     */
     @Adaptive({Constants.EXCHANGER_KEY})
     ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException;
 
@@ -48,6 +58,11 @@ public interface Exchanger {
      * @param url
      * @param handler
      * @return message channel
+     */
+    /**
+     * @desc:连接一个服务器，创建客户端
+     * @author: zhaoyibing
+     * @time: 2019年5月23日 上午11:04:42
      */
     @Adaptive({Constants.EXCHANGER_KEY})
     ExchangeClient connect(URL url, ExchangeHandler handler) throws RemotingException;
