@@ -43,6 +43,11 @@ public class DynamicChannelBuffer extends AbstractChannelBuffer {
         buffer = factory.getBuffer(estimatedLength);
     }
 
+    /**
+     * @desc:扩容
+     * @author: zhaoyibing
+     * @time: 2019年5月23日 下午4:34:34
+     */
     @Override
     public void ensureWritableBytes(int minWritableBytes) {
         if (minWritableBytes <= writableBytes()) {

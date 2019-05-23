@@ -37,6 +37,11 @@ public class HeapChannelBuffer extends AbstractChannelBuffer {
      *
      * @param length the length of the new byte array
      */
+    /**
+     * @desc:使用新分配的字节数组创建新的堆缓冲区
+     * @author: zhaoyibing
+     * @time: 2019年5月23日 下午4:43:01
+     */
     public HeapChannelBuffer(int length) {
         this(new byte[length], 0, 0);
     }
@@ -45,6 +50,11 @@ public class HeapChannelBuffer extends AbstractChannelBuffer {
      * Creates a new heap buffer with an existing byte array.
      *
      * @param array the byte array to wrap
+     */
+    /**
+     * @desc:使用现有字节数组创建新的堆缓冲区。
+     * @author: zhaoyibing
+     * @time: 2019年5月23日 下午4:42:55
      */
     public HeapChannelBuffer(byte[] array) {
         this(array, 0, array.length);
