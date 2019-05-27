@@ -21,6 +21,11 @@ import org.apache.dubbo.common.extension.SPI;
 /**
  * ExporterListener. (SPI, Singleton, ThreadSafe)
  */
+/**
+ * @desc:该接口是服务暴露的监听器接口，定义了两个方法是暴露和取消暴露，参数都是Exporter类型的。
+ * @author: zhaoyibing
+ * @time: 2019年5月27日 下午3:35:19
+ */
 @SPI
 public interface ExporterListener {
 

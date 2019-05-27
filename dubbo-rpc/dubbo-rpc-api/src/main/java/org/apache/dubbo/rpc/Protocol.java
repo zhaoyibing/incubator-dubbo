@@ -23,6 +23,11 @@ import org.apache.dubbo.common.extension.SPI;
 /**
  * Protocol. (API/SPI, Singleton, ThreadSafe)
  */
+/**
+ * @desc:该接口是服务域接口，也是协议接口，它是一个可扩展的接口，默认实现的是dubbo协议。
+ * @author: zhaoyibing
+ * @time: 2019年5月27日 下午3:39:55
+ */
 @SPI("dubbo")
 public interface Protocol {
 
@@ -30,6 +35,11 @@ public interface Protocol {
      * Get default port when user doesn't config the port.
      *
      * @return default port
+     */
+    /**
+     * @desc:获得默认的端口
+     * @author: zhaoyibing
+     * @time: 2019年5月27日 下午3:46:36
      */
     int getDefaultPort();
 
@@ -45,6 +55,11 @@ public interface Protocol {
      * @param invoker Service invoker
      * @return exporter reference for exported service, useful for unexport the service later
      * @throws RpcException thrown when error occurs during export the service, for example: port is occupied
+     */
+    /**
+     * @desc:暴露服务
+     * @author: zhaoyibing
+     * @time: 2019年5月27日 下午3:46:56
      */
     @Adaptive
     <T> Exporter<T> export(Invoker<T> invoker) throws RpcException;
@@ -63,6 +78,11 @@ public interface Protocol {
      * @param url  URL address for the remote service
      * @return invoker service's local proxy
      * @throws RpcException when there's any error while connecting to the service provider
+     */
+    /**
+     * @desc:引用服务
+     * @author: zhaoyibing
+     * @time: 2019年5月27日 下午3:47:18
      */
     @Adaptive
     <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException;

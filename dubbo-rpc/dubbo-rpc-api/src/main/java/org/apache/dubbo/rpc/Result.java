@@ -27,6 +27,11 @@ import java.util.Map;
  * @see org.apache.dubbo.rpc.Invoker#invoke(Invocation)
  * @see org.apache.dubbo.rpc.RpcResult
  */
+/**
+ * @desc:该接口是实体域执行invoke的结果接口
+ * @author: zhaoyibing
+ * @time: 2019年5月27日 下午3:52:51
+ */
 public interface Result extends Serializable {
 
     /**

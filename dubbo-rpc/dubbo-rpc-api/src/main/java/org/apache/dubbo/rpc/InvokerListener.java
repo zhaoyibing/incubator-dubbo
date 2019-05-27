@@ -21,6 +21,11 @@ import org.apache.dubbo.common.extension.SPI;
 /**
  * InvokerListener. (SPI, Singleton, ThreadSafe)
  */
+/**
+ * @desc:该接口是实体域的监听器，定义了两个方法，分别是服务引用和销毁的时候执行的方法
+ * @author: zhaoyibing
+ * @time: 2019年5月27日 下午3:51:23
+ */
 @SPI
 public interface InvokerListener {
 
@@ -30,6 +35,11 @@ public interface InvokerListener {
      * @param invoker
      * @throws RpcException
      * @see org.apache.dubbo.rpc.Protocol#refer(Class, org.apache.dubbo.common.URL)
+     */
+    /**
+     * @desc:在服务引用的时候进行监听
+     * @author: zhaoyibing
+     * @time: 2019年5月27日 下午3:51:07
      */
     void referred(Invoker<?> invoker) throws RpcException;
 

@@ -25,6 +25,11 @@ import java.util.Map;
  * @see org.apache.dubbo.rpc.Invoker#invoke(Invocation)
  * @see org.apache.dubbo.rpc.RpcInvocation
  */
+/**
+ * @desc:Invocation 是会话域，它持有调用过程中的变量，比如方法名，参数等。
+ * @author: zhaoyibing
+ * @time: 2019年5月27日 下午3:26:44
+ */
 public interface Invocation {
 
     /**
@@ -32,6 +37,11 @@ public interface Invocation {
      *
      * @return method name.
      * @serial
+     */
+    /**
+     * @desc:获得方法名称
+     * @author: zhaoyibing
+     * @time: 2019年5月27日 下午3:26:47
      */
     String getMethodName();
 
@@ -57,6 +67,11 @@ public interface Invocation {
      * @return attachments.
      * @serial
      */
+    /**
+     * @desc:获得附加值集合
+     * @author: zhaoyibing
+     * @time: 2019年5月27日 下午3:27:35
+     */
     Map<String, String> getAttachments();
 
     /**
@@ -64,6 +79,11 @@ public interface Invocation {
      *
      * @return attachment value.
      * @serial
+     */
+    /**
+     * @desc:获得附加值
+     * @author: zhaoyibing
+     * @time: 2019年5月27日 下午3:27:52
      */
     String getAttachment(String key);
 
@@ -73,6 +93,11 @@ public interface Invocation {
      * @return attachment value.
      * @serial
      */
+    /**
+     * @desc:获得附加值
+     * @author: zhaoyibing
+     * @time: 2019年5月27日 下午3:28:11
+     */
     String getAttachment(String key, String defaultValue);
 
     /**
@@ -80,6 +105,11 @@ public interface Invocation {
      *
      * @return invoker.
      * @transient
+     */
+    /**
+     * @desc:获得当前上下文的invoker
+     * @author: zhaoyibing
+     * @time: 2019年5月27日 下午3:28:16
      */
     Invoker<?> getInvoker();
 

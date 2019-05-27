@@ -47,6 +47,12 @@ import java.util.concurrent.TimeoutException;
  * @export
  * @see org.apache.dubbo.rpc.filter.ContextFilter
  */
+/**
+ * @desc:该类就是远程调用的上下文，贯穿着整个调用，例如A调用B，然后B调用C。
+ * 在服务B上，RpcContext在B之前将调用信息从A保存到B。开始调用C，并在B调用C后将调用信息从B保存到C。RpcContext保存了调用信息。
+ * @author: zhaoyibing
+ * @time: 2019年5月27日 下午3:57:11
+ */
 public class RpcContext {
 
     /**

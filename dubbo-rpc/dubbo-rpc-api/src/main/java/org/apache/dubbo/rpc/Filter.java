@@ -40,6 +40,11 @@ import org.apache.dubbo.common.extension.SPI;
  * @see org.apache.dubbo.rpc.filter.TokenFilter
  * @see org.apache.dubbo.rpc.filter.TpsLimitFilter
  */
+/**
+ * @desc:过滤器接口
+ * @author: zhaoyibing
+ * @time: 2019年5月27日 下午3:49:01
+ */
 @SPI
 public interface Filter {
 

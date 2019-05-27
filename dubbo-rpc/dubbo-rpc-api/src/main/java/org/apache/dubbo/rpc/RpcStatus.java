@@ -30,10 +30,17 @@ import java.util.concurrent.atomic.AtomicLong;
  * @see org.apache.dubbo.rpc.filter.ExecuteLimitFilter
  * @see org.apache.dubbo.rpc.cluster.loadbalance.LeastActiveLoadBalance
  */
+/**
+ * @desc:该类是rpc的一些状态监控，其中封装了许多的计数器，用来记录rpc调用的状态
+ * @author: zhaoyibing
+ * @time: 2019年5月27日 下午4:14:31
+ */
 public class RpcStatus {
 
+    // uri对应的状态集合，key为uri，value为RpcStatus对象
     private static final ConcurrentMap<String, RpcStatus> SERVICE_STATISTICS = new ConcurrentHashMap<String, RpcStatus>();
 
+    // method对应的状态集合，key是uri，第二个key是方法名methodName
     private static final ConcurrentMap<String, ConcurrentMap<String, RpcStatus>> METHOD_STATISTICS = new ConcurrentHashMap<String, ConcurrentMap<String, RpcStatus>>();
     private final ConcurrentMap<String, Object> values = new ConcurrentHashMap<String, Object>();
     private final AtomicInteger active = new AtomicInteger();

@@ -24,6 +24,12 @@ import org.apache.dubbo.common.extension.SPI;
 /**
  * ProxyFactory. (API/SPI, Singleton, ThreadSafe)
  */
+/**
+ * @desc:代理工厂接口，默认实现javassist，dubbo提供两种动态代理方法分别是javassist/jdk，
+ * 该接口定义了三个方法，前两个方法是通过invoker创建代理，最后一个是通过代理来获得invoker
+ * @author: zhaoyibing
+ * @time: 2019年5月27日 下午3:54:15
+ */
 @SPI("javassist")
 public interface ProxyFactory {
 

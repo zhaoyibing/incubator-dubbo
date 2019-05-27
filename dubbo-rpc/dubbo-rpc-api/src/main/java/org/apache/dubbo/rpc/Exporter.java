@@ -23,12 +23,22 @@ package org.apache.dubbo.rpc;
  * @see org.apache.dubbo.rpc.ExporterListener
  * @see org.apache.dubbo.rpc.protocol.AbstractExporter
  */
+/**
+ * @desc:该接口是暴露服务的接口，定义了两个方法分别是获得invoker和取消暴露服务。
+ * @author: zhaoyibing
+ * @time: 2019年5月27日 下午3:32:42
+ */
 public interface Exporter<T> {
 
     /**
      * get invoker.
      *
      * @return invoker
+     */
+    /**
+     * @desc:获得对应的实体域invoker
+     * @author: zhaoyibing
+     * @time: 2019年5月27日 下午3:33:37
      */
     Invoker<T> getInvoker();
 
@@ -38,6 +48,11 @@ public interface Exporter<T> {
      * <code>
      * getInvoker().destroy();
      * </code>
+     */
+    /**
+     * @desc:取消暴露
+     * @author: zhaoyibing
+     * @time: 2019年5月27日 下午3:33:26
      */
     void unexport();
 
