@@ -23,6 +23,11 @@ import org.apache.dubbo.rpc.RpcException;
 /**
  * InvokerListenerAdapter
  */
+/**
+ * @desc:InvokerList适配器类，提供了空的实现
+ * @author: zhaoyibing
+ * @time: 2019年5月28日 下午4:25:50
+ */
 public abstract class InvokerListenerAdapter implements InvokerListener {
 
     @Override
