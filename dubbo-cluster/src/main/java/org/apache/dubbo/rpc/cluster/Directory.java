@@ -30,6 +30,11 @@ import java.util.List;
  *
  * @see org.apache.dubbo.rpc.cluster.Cluster#join(Directory)
  */
+/**
+ * @desc:
+ * @author: zhaoyibing
+ * @time: 2019年6月10日 下午3:11:16
+ */
 public interface Directory<T> extends Node {
 
     /**

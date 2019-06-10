@@ -284,6 +284,11 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
      * @param provider whether it is the provider side
      * @return
      */
+    /**
+     * @desc:加载注册中心列表
+     * @author: zhaoyibing
+     * @time: 2019年6月3日 下午5:38:01
+     */
     protected List<URL> loadRegistries(boolean provider) {
         // check && override if necessary
         List<URL> registryList = new ArrayList<URL>();

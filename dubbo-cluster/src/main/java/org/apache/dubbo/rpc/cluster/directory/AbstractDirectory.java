@@ -36,6 +36,11 @@ import java.util.Map;
  * Abstract implementation of Directory: Invoker list returned from this Directory's list method have been filtered by Routers
  *
  */
+/**
+ * @desc:
+ * @author: zhaoyibing
+ * @time: 2019年6月10日 下午3:12:26
+ */
 public abstract class AbstractDirectory<T> implements Directory<T> {
 
     // logger
@@ -73,6 +78,11 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
         setRouterChain(routerChain);
     }
 
+    /**
+     * @desc:添加是否销毁的校验，抽象了doList()方法供子类实现
+     * @author: zhaoyibing
+     * @time: 2019年6月10日 下午3:12:44
+     */
     @Override
     public List<Invoker<T>> list(Invocation invocation) throws RpcException {
         if (destroyed) {

@@ -324,6 +324,11 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         checkMock(interfaceClass);
     }
 
+    /**
+     * @desc:暴露服务入口
+     * @author: zhaoyibing
+     * @time: 2019年6月3日 下午5:38:46
+     */
     public synchronized void export() {
         checkAndUpdateSubConfigs();
 
@@ -331,6 +336,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
             return;
         }
 
+        // 支持延迟暴露，如果应用启动时，暴露的服务较多，可以采用延迟暴露的方式
         if (shouldDelay()) {
             delayExportExecutor.schedule(this::doExport, delay, TimeUnit.MILLISECONDS);
         } else {
@@ -360,6 +366,11 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         return delay != null && delay > 0;
     }
 
+    /**
+     * @desc:暴露服务，
+     * @author: zhaoyibing
+     * @time: 2019年6月3日 下午5:40:29
+     */
     protected synchronized void doExport() {
         if (unexported) {
             throw new IllegalStateException("The service " + interfaceClass.getName() + " has already unexported!");
@@ -407,6 +418,11 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         unexported = true;
     }
 
+    /**
+     * @desc:加载注册中心列表，向所有注册中心注册服务
+     * @author: zhaoyibing
+     * @time: 2019年6月3日 下午5:40:49
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void doExportUrls() {
         List<URL> registryURLs = loadRegistries(true);
@@ -418,6 +434,11 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         }
     }
 
+    /**
+     * @desc:向注册中心注册服务
+     * @author: zhaoyibing
+     * @time: 2019年6月3日 下午5:41:21
+     */
     private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) {
         String name = protocolConfig.getName();
         if (StringUtils.isEmpty(name)) {
@@ -553,9 +574,11 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                             registryURL = registryURL.addParameter(Constants.PROXY_KEY, proxy);
                         }
 
+                        // 动态代理创建Invoker
                         Invoker<?> invoker = proxyFactory.getInvoker(ref, (Class) interfaceClass, registryURL.addParameterAndEncoded(Constants.EXPORT_KEY, url.toFullString()));
                         DelegateProviderMetaDataInvoker wrapperInvoker = new DelegateProviderMetaDataInvoker(invoker, this);
 
+                        // 协议暴露服务
                         Exporter<?> exporter = protocol.export(wrapperInvoker);
                         exporters.add(exporter);
                     }

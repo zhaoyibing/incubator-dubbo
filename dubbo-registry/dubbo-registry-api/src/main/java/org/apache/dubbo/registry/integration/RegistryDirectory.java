@@ -71,6 +71,11 @@ import static org.apache.dubbo.common.Constants.ROUTE_PROTOCOL;
 /**
  * RegistryDirectory
  */
+/**
+ * @desc:动态服务目录，它实现了 NotifyListener 接口。当注册中心服务配置发生变化后，RegistryDirectory 可收到与当前服务相关的变化。收到变更通知后，RegistryDirectory 可根据配置变更信息刷新 Invoker 列表。
+ * @author: zhaoyibing
+ * @time: 2019年6月10日 下午3:14:13
+ */
 public class RegistryDirectory<T> extends AbstractDirectory<T> implements NotifyListener {
 
     private static final Logger logger = LoggerFactory.getLogger(RegistryDirectory.class);
@@ -543,6 +548,11 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         }
     }
 
+    /**
+     * @desc:获取Invoker列表，父类中的抽象方法
+     * @author: zhaoyibing
+     * @time: 2019年6月10日 下午3:16:54
+     */
     @Override
     public List<Invoker<T>> doList(Invocation invocation) {
         if (forbidden) {
