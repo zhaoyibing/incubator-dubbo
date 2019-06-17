@@ -16,6 +16,9 @@
  */
 package org.apache.dubbo.rpc.proxy;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.CompletableFuture;
+
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
@@ -29,11 +32,18 @@ import org.apache.dubbo.rpc.RpcException;
 import org.apache.dubbo.rpc.RpcResult;
 import org.apache.dubbo.rpc.support.RpcUtils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.CompletableFuture;
-
 /**
  * InvokerWrapper
+ */
+/**
+ * @desc:抽象代理Invoker，
+ * @author: zhaoyibing
+ * @time: 2019年6月14日 下午3:42:33
+ * 
+ * 
+ * @see org.apache.dubbo.rpc.proxy.javassist.JavassistProxyFactory#getInvoker(Object, Class, URL)
+ * @see org.apache.dubbo.rpc.proxy.jdk.JdkProxyFactory#getInvoker(Object, Class, URL)
+ * 
  */
 public abstract class AbstractProxyInvoker<T> implements Invoker<T> {
     Logger logger = LoggerFactory.getLogger(AbstractProxyInvoker.class);
